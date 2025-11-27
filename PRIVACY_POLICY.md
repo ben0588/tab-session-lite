@@ -148,7 +148,7 @@ If you have any questions about this Privacy Policy, please contact us through:
 
 **Tab Session Lite** is an open-source project with source code publicly available on GitHub. You are free to review and audit the code to ensure there are no hidden data collection behaviors.
 
-🔗 GitHub: [您的 GitHub repo 連結]
+🔗 GitHub: [https://github.com/ben0588/tab-session-lite]
 
 ---
 
