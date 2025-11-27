@@ -18,7 +18,7 @@ export default function Toast({ message, type = 'success', onClose }) {
   );
 
   return (
-    <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-fade-in`}>
+    <div className={`fixed top-3 left-3 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-fade-in`}>
       {icon}
       <span className="text-sm font-medium">{message}</span>
       <button 
