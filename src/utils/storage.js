@@ -186,13 +186,11 @@ export const restoreSession = async (session) => {
  */
 export const restoreWindow = async (win) => {
   try {
-    const urls = win.tabs.map(tab => tab.url);
-    
-    if (urls.length === 0) return;
+    if (win.tabs.length === 0) return;
 
     // 建立新視窗並設定位置與大小
     const createOptions = {
-      url: urls[0],
+      url: win.tabs[0].url,
       left: win.left,
       top: win.top,
       width: win.width,
@@ -206,71 +204,88 @@ export const restoreWindow = async (win) => {
 
     const newWindow = await chrome.windows.create(createOptions);
     
-    // 儲存新建立的分頁 ID 對應
-    const createdTabs = [{ tabId: newWindow.tabs[0].id, originalTab: win.tabs[0] }];
+    // 用於追蹤已建立的群組 (groupInfo -> groupId)
+    const groupMap = new Map();
     
-    // 開啟剩餘的分頁
-    for (let i = 1; i < urls.length; i++) {
+    // 處理第一個分頁的群組
+    if (win.tabs[0].groupInfo) {
+      const groupKey = JSON.stringify(win.tabs[0].groupInfo);
+      try {
+        const groupId = await chrome.tabs.group({ 
+          tabIds: [newWindow.tabs[0].id],
+          createProperties: { windowId: newWindow.id }
+        });
+        await chrome.tabGroups.update(groupId, {
+          title: win.tabs[0].groupInfo.title || '',
+          color: win.tabs[0].groupInfo.color || 'grey',
+          collapsed: false, // 先不收合，等全部完成再處理
+        });
+        groupMap.set(groupKey, groupId);
+      } catch (_e) {
+        // 群組建立失敗，忽略
+      }
+    }
+    
+    // 依序開啟剩餘的分頁，並按順序加入群組
+    for (let i = 1; i < win.tabs.length; i++) {
+      const tab = win.tabs[i];
+      
+      // 建立分頁，index 確保順序正確
       const newTab = await chrome.tabs.create({
         windowId: newWindow.id,
-        url: urls[i],
+        url: tab.url,
+        index: i, // 確保分頁在正確位置
       });
-      createdTabs.push({ tabId: newTab.id, originalTab: win.tabs[i] });
+      
+      // 如果有群組資訊，加入群組
+      if (tab.groupInfo) {
+        const groupKey = JSON.stringify(tab.groupInfo);
+        
+        try {
+          if (groupMap.has(groupKey)) {
+            // 已有此群組，將分頁加入
+            await chrome.tabs.group({ 
+              tabIds: [newTab.id],
+              groupId: groupMap.get(groupKey)
+            });
+          } else {
+            // 建立新群組
+            const groupId = await chrome.tabs.group({ 
+              tabIds: [newTab.id],
+              createProperties: { windowId: newWindow.id }
+            });
+            await chrome.tabGroups.update(groupId, {
+              title: tab.groupInfo.title || '',
+              color: tab.groupInfo.color || 'grey',
+              collapsed: false,
+            });
+            groupMap.set(groupKey, groupId);
+          }
+        } catch (_e) {
+          // 群組操作失敗，忽略
+        }
+      }
     }
-
-    // 還原分頁群組
-    await restoreTabGroups(createdTabs);
+    
+    // 最後處理群組的收合狀態
+    for (let i = 0; i < win.tabs.length; i++) {
+      const tab = win.tabs[i];
+      if (tab.groupInfo && tab.groupInfo.collapsed) {
+        const groupKey = JSON.stringify(tab.groupInfo);
+        const groupId = groupMap.get(groupKey);
+        if (groupId) {
+          try {
+            await chrome.tabGroups.update(groupId, { collapsed: true });
+          } catch (_e) {
+            // 忽略
+          }
+        }
+      }
+    }
     
   } catch (error) {
     console.error('恢復視窗失敗:', error);
     throw error;
-  }
-};
-
-/**
- * 還原分頁群組
- * @param {Array} createdTabs - 已建立的分頁對應陣列
- */
-const restoreTabGroups = async (createdTabs) => {
-  try {
-    // 收集需要分組的分頁，按原始 groupId 分類
-    const groupsToCreate = {};
-    
-    for (const { tabId, originalTab } of createdTabs) {
-      if (originalTab.groupInfo) {
-        const groupKey = JSON.stringify(originalTab.groupInfo);
-        if (!groupsToCreate[groupKey]) {
-          groupsToCreate[groupKey] = {
-            info: originalTab.groupInfo,
-            tabIds: [],
-          };
-        }
-        groupsToCreate[groupKey].tabIds.push(tabId);
-      }
-    }
-
-    // 建立分頁群組
-    for (const groupKey of Object.keys(groupsToCreate)) {
-      const { info, tabIds } = groupsToCreate[groupKey];
-      
-      if (tabIds.length > 0) {
-        try {
-          // 將分頁加入群組
-          const groupId = await chrome.tabs.group({ tabIds });
-          
-          // 設定群組屬性
-          await chrome.tabGroups.update(groupId, {
-            title: info.title || '',
-            color: info.color || 'grey',
-            collapsed: info.collapsed || false,
-          });
-        } catch (e) {
-          console.log('建立分頁群組失敗:', e);
-        }
-      }
-    }
-  } catch (error) {
-    console.log('還原分頁群組失敗:', error);
   }
 };
 
