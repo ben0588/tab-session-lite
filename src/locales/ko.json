@@ -1,0 +1,101 @@
+{
+  "app": {
+    "title": "Tab Session Lite",
+    "subtitle": "즉시 저장, 로컬 전용"
+  },
+  "header": {
+    "saveButton": "지금 저장",
+    "saving": "저장 중..."
+  },
+  "sessionList": {
+    "empty": "저장된 세션이 없습니다",
+    "emptyHint": "위의 버튼을 클릭하여 현재 탭 저장",
+    "clearAll": "모두 지우기"
+  },
+  "sessionItem": {
+    "window": "창",
+    "windows": "창",
+    "tab": "탭",
+    "tabs": "탭",
+    "editNameHint": "클릭하여 이름 편집",
+    "restoreAll": "모두 열기",
+    "updateRecord": "기록 업데이트",
+    "delete": "삭제",
+    "openWindow": "이 창 열기",
+    "deleteWindow": "이 창 삭제",
+    "deleteTab": "이 탭 삭제",
+    "tabGroup": "탭 그룹"
+  },
+  "export": {
+    "button": "내보내기",
+    "title": "모든 기록을 JSON 파일로 내보내기"
+  },
+  "import": {
+    "button": "가져오기",
+    "title": "JSON 파일에서 기록 가져오기",
+    "dialogTitle": "가져오기 방법 선택",
+    "dialogMessage": "파일에 {{count}}개의 기록이 있습니다.\n\n• 병합: 기존 기록을 유지하고 가져온 데이터 추가\n• 대체: 기존 기록을 모두 지우고 가져온 데이터 사용",
+    "mergeButton": "병합 (기존 유지+추가)",
+    "replaceButton": "대체 (지우고 가져오기)",
+    "confirmReplaceTitle": "⚠️ 대체 확인",
+    "confirmReplaceMessage": "이 작업은 기존의 모든 기록을 삭제하고 가져온 데이터로 대체합니다. 이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?",
+    "confirmReplaceButton": "대체 확인"
+  },
+  "banner": {
+    "openSource": "소스",
+    "donate": "후원",
+    "privacy": "개인정보",
+    "openSourceTitle": "GitHub에서 소스 코드 보기",
+    "donateTitle": "커피 한 잔 사주기",
+    "privacyTitle": "개인정보처리방침",
+    "version": "v1.2.0 · 로컬 전용 · 추적 없음"
+  },
+  "language": {
+    "title": "언어",
+    "zh-Hant": "繁體中文",
+    "zh-Hans": "简体中文",
+    "en": "English",
+    "ja": "日本語",
+    "ko": "한국어"
+  },
+  "dialog": {
+    "confirm": "확인",
+    "cancel": "취소",
+    "deleteTitle": "삭제 확인",
+    "deleteMessage": "이 세션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "clearAllTitle": "모두 지우기",
+    "clearAllMessage": "{{count}}개의 세션을 모두 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "updateTitle": "업데이트 확인",
+    "updateMessage": "현재 열린 모든 창으로 \"{{name}}\"을(를) 덮어쓰시겠습니까? 기존 기록이 대체됩니다.",
+    "deleteWindowTitle": "창 삭제 확인",
+    "deleteWindowMessage": "이 창 ({{count}}개 탭)을 삭제하시겠습니까?"
+  },
+  "toast": {
+    "loadFailed": "불러오기 실패",
+    "saved": "{{count}}개 탭 저장됨",
+    "noTabs": "저장할 탭이 없습니다",
+    "saveFailed": "저장 실패",
+    "updateFailed": "업데이트 실패",
+    "deleted": "삭제됨",
+    "deleteFailed": "삭제 실패",
+    "clearedAll": "모든 기록이 지워졌습니다",
+    "clearFailed": "지우기 실패",
+    "restored": "{{count}}개 탭 복원됨",
+    "restoreFailed": "복원 실패",
+    "openTabFailed": "탭 열기 실패",
+    "restoreWindowFailed": "창 복원 실패",
+    "updated": "기록 업데이트됨 ({{count}}개 탭)",
+    "noTabsIncognito": "저장할 탭이 없습니다 (시크릿 창은 제외됨)",
+    "recordDeleted": "기록 삭제됨 (남은 창 없음)",
+    "windowDeleted": "창 삭제됨",
+    "exported": "기록 내보내기 완료",
+    "exportFailed": "내보내기 실패",
+    "invalidJson": "잘못된 JSON 형식",
+    "invalidJsonFile": "잘못된 JSON 파일",
+    "noNewRecords": "새 기록이 추가되지 않음 (이미 존재할 수 있음)",
+    "imported": "{{count}}개 기록 추가됨",
+    "importedReplaced": "{{count}}개 기록 가져옴 (기존 대체됨)",
+    "importFailed": "가져오기 실패",
+    "readFileFailed": "파일 읽기 실패"
+  }
+}

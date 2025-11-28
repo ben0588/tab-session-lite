@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.2.0] - 2025-11-28
+
+### 新增功能 / New Features
+
+- **多語系支援** - 支援 5 種語言：繁體中文、简体中文、English、日本語、한국어
+- **Multi-language Support** - Support 5 languages: Traditional Chinese, Simplified Chinese, English, Japanese, Korean
+
+- **語言切換器** - 底部新增地球圖示，點擊可切換介面語言
+- **Language Switcher** - Added globe icon at footer to switch interface language
+
+- **自動語言偵測** - 根據瀏覽器語言自動選擇對應的介面語言
+- **Auto Language Detection** - Automatically detect browser language and apply corresponding interface language
+
+### 改進 / Improvements
+
+- **預設語言** - 預設語言改為繁體中文
+- **Default Language** - Changed default language to Traditional Chinese
+
+- **隱私權政策** - 新增简体中文、日本語、한국어版本
+- **Privacy Policy** - Added Simplified Chinese, Japanese, Korean versions
+
+---
+
 ## [1.1.0] - 2025-11-28
 
 ### 新增功能 / New Features

@@ -4,7 +4,7 @@
 
 **核心價值：Instant Save, Local Only.**
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 ## 功能特色
@@ -28,11 +28,13 @@
   - 資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
   - 自動排除無痕模式視窗
 - ⚡ **效能優化**：Lazy Loading 背景分頁延遲載入
+- 🌐 **多語系支援**：繁體中文、简体中文、English、日本語、한국어
 
 ## 技術架構
 
 - **框架**: React 19 + Vite 5
 - **樣式**: Tailwind CSS 3.x
+- **多語系**: react-i18next + i18next
 - **儲存**: chrome.storage.local
 - **Manifest**: V3
 

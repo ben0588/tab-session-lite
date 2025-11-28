@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import SessionList from './components/SessionList';
 import Toast from './components/Toast';
 import Banner from './components/Banner';
@@ -19,6 +20,7 @@ import {
 } from './utils/storage';
 
 function App() {
+  const { t } = useTranslation();
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -31,11 +33,11 @@ function App() {
       const data = await loadSessions();
       setSessions(data);
     } catch (_error) {
-      showToast('載入失敗', 'error');
+      showToast(t('toast.loadFailed'), 'error');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchSessions();
@@ -56,12 +58,12 @@ function App() {
       const newSession = await saveSession();
       if (newSession) {
         setSessions((prev) => [newSession, ...prev]);
-        showToast(`已保存 ${newSession.totalTabs} 個分頁`);
+        showToast(t('toast.saved', { count: newSession.totalTabs }));
       } else {
-        showToast('沒有可保存的分頁', 'info');
+        showToast(t('toast.noTabs'), 'info');
       }
     } catch (_error) {
-      showToast('保存失敗', 'error');
+      showToast(t('toast.saveFailed'), 'error');
     } finally {
       setIsSaving(false);
     }
@@ -81,7 +83,7 @@ function App() {
         prev.map((s) => s.id === updatedSession.id ? updatedSession : s)
       );
     } else {
-      showToast('更新失敗', 'error');
+      showToast(t('toast.updateFailed'), 'error');
     }
   };
 
@@ -89,15 +91,15 @@ function App() {
   const handleDelete = async (sessionId) => {
     setConfirmDialog({
       isOpen: true,
-      title: '刪除確認',
-      message: '確定要刪除這個 Session 嗎？此操作無法復原。',
+      title: t('dialog.deleteTitle'),
+      message: t('dialog.deleteMessage'),
       onConfirm: async () => {
         const success = await deleteSession(sessionId);
         if (success) {
           setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-          showToast('已刪除');
+          showToast(t('toast.deleted'));
         } else {
-          showToast('刪除失敗', 'error');
+          showToast(t('toast.deleteFailed'), 'error');
         }
         setConfirmDialog({ isOpen: false });
       },
@@ -111,15 +113,15 @@ function App() {
     
     setConfirmDialog({
       isOpen: true,
-      title: '清空全部',
-      message: `確定要清空所有 ${sessions.length} 個 Session 嗎？此操作無法復原。`,
+      title: t('dialog.clearAllTitle'),
+      message: t('dialog.clearAllMessage', { count: sessions.length }),
       onConfirm: async () => {
         const success = await clearAllSessions();
         if (success) {
           setSessions([]);
-          showToast('已清空所有紀錄');
+          showToast(t('toast.clearedAll'));
         } else {
-          showToast('清空失敗', 'error');
+          showToast(t('toast.clearFailed'), 'error');
         }
         setConfirmDialog({ isOpen: false });
       },
@@ -131,9 +133,9 @@ function App() {
   const handleRestore = async (session) => {
     try {
       await restoreSession(session);
-      showToast(`已恢復 ${session.totalTabs} 個分頁`);
+      showToast(t('toast.restored', { count: session.totalTabs }));
     } catch (_error) {
-      showToast('恢復失敗', 'error');
+      showToast(t('toast.restoreFailed'), 'error');
     }
   };
 
@@ -142,7 +144,7 @@ function App() {
     try {
       await openSingleTab(url);
     } catch (_error) {
-      showToast('開啟分頁失敗', 'error');
+      showToast(t('toast.openTabFailed'), 'error');
     }
   };
 
@@ -150,9 +152,9 @@ function App() {
   const handleRestoreWindow = async (windowData) => {
     try {
       await restoreWindow(windowData);
-      showToast(`已恢復 ${windowData.tabs.length} 個分頁`);
+      showToast(t('toast.restored', { count: windowData.tabs.length }));
     } catch (_error) {
-      showToast('恢復視窗失敗', 'error');
+      showToast(t('toast.restoreWindowFailed'), 'error');
     }
   };
 
@@ -160,8 +162,8 @@ function App() {
   const handleOverwrite = (session) => {
     setConfirmDialog({
       isOpen: true,
-      title: '更新紀錄確認',
-      message: `確定要使用目前所有開啟的視窗覆蓋「${session.name}」嗎？原有紀錄將被取代。`,
+      title: t('dialog.updateTitle'),
+      message: t('dialog.updateMessage', { name: session.name }),
       onConfirm: async () => {
         try {
           const updatedSession = await overwriteSession(session.id, session.name);
@@ -169,12 +171,12 @@ function App() {
             setSessions((prev) =>
               prev.map((s) => (s.id === session.id ? updatedSession : s))
             );
-            showToast(`已更新紀錄 (${updatedSession.totalTabs} 個分頁)`);
+            showToast(t('toast.updated', { count: updatedSession.totalTabs }));
           } else {
-            showToast('沒有可保存的分頁 (無痕視窗不會保存)', 'info');
+            showToast(t('toast.noTabsIncognito'), 'info');
           }
         } catch (_error) {
-          showToast('更新失敗', 'error');
+          showToast(t('toast.updateFailed'), 'error');
         }
         setConfirmDialog({ isOpen: false });
       },
@@ -192,8 +194,8 @@ function App() {
 
     setConfirmDialog({
       isOpen: true,
-      title: '刪除視窗確認',
-      message: `確定要刪除這個視窗 (${tabCount} 個分頁) 嗎？`,
+      title: t('dialog.deleteWindowTitle'),
+      message: t('dialog.deleteWindowMessage', { count: tabCount }),
       onConfirm: async () => {
         const newWindows = session.windows.filter((_, idx) => idx !== windowIndex);
         const updatedSession = {
@@ -207,9 +209,9 @@ function App() {
           const success = await deleteSession(sessionId);
           if (success) {
             setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-            showToast('紀錄已刪除 (無剩餘視窗)');
+            showToast(t('toast.recordDeleted'));
           } else {
-            showToast('刪除失敗', 'error');
+            showToast(t('toast.deleteFailed'), 'error');
           }
         } else {
           const success = await updateSession(updatedSession);
@@ -217,9 +219,9 @@ function App() {
             setSessions((prev) =>
               prev.map((s) => (s.id === sessionId ? updatedSession : s))
             );
-            showToast('視窗已刪除');
+            showToast(t('toast.windowDeleted'));
           } else {
-            showToast('刪除失敗', 'error');
+            showToast(t('toast.deleteFailed'), 'error');
           }
         }
         setConfirmDialog({ isOpen: false });
@@ -241,9 +243,9 @@ function App() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('已匯出紀錄');
+      showToast(t('toast.exported'));
     } catch (_error) {
-      showToast('匯出失敗', 'error');
+      showToast(t('toast.exportFailed'), 'error');
     }
   };
 
@@ -266,12 +268,12 @@ function App() {
       try {
         parsedData = JSON.parse(text);
         if (!parsedData.sessions || !Array.isArray(parsedData.sessions)) {
-          showToast('無效的 JSON 格式', 'error');
+          showToast(t('toast.invalidJson'), 'error');
           e.target.value = '';
           return;
         }
       } catch {
-        showToast('無效的 JSON 檔案', 'error');
+        showToast(t('toast.invalidJsonFile'), 'error');
         e.target.value = '';
         return;
       }
@@ -281,10 +283,10 @@ function App() {
       // 詢問匯入方式
       setConfirmDialog({
         isOpen: true,
-        title: '選擇匯入方式',
-        message: `檔案包含 ${importCount} 筆紀錄。\n\n• 合併：保留您現有的紀錄，並新增匯入的資料\n• 取代：清除所有現有紀錄，改用匯入的資料`,
-        confirmText: '合併 (保留現有+新增)',
-        cancelText: '取代 (清空後匯入)',
+        title: t('import.dialogTitle'),
+        message: t('import.dialogMessage', { count: importCount }),
+        confirmText: t('import.mergeButton'),
+        cancelText: t('import.replaceButton'),
         type: 'info',
         onConfirm: async () => {
           // 合併模式：保留現有 + 新增匯入的
@@ -292,12 +294,12 @@ function App() {
           if (result.success) {
             await fetchSessions();
             if (result.imported === 0) {
-              showToast('沒有新增紀錄 (可能已存在相同紀錄)', 'info');
+              showToast(t('toast.noNewRecords'), 'info');
             } else {
-              showToast(`已新增 ${result.imported} 筆紀錄`);
+              showToast(t('toast.imported', { count: result.imported }));
             }
           } else {
-            showToast(result.error || '匯入失敗', 'error');
+            showToast(result.error || t('toast.importFailed'), 'error');
           }
           setConfirmDialog({ isOpen: false });
         },
@@ -305,18 +307,18 @@ function App() {
           // 再次確認是否真的要取代
           setConfirmDialog({
             isOpen: true,
-            title: '⚠️ 確認取代',
-            message: '這將會刪除您所有現有的紀錄，並以匯入的資料取代。此操作無法復原，確定嗎？',
-            confirmText: '確定取代',
-            cancelText: '取消',
+            title: t('import.confirmReplaceTitle'),
+            message: t('import.confirmReplaceMessage'),
+            confirmText: t('import.confirmReplaceButton'),
+            cancelText: t('dialog.cancel'),
             type: 'danger',
             onConfirm: async () => {
               const result = await importSessions(text, true);
               if (result.success) {
                 await fetchSessions();
-                showToast(`已匯入 ${result.imported} 筆紀錄 (已取代原有資料)`);
+                showToast(t('toast.importedReplaced', { count: result.imported }));
               } else {
-                showToast(result.error || '匯入失敗', 'error');
+                showToast(result.error || t('toast.importFailed'), 'error');
               }
               setConfirmDialog({ isOpen: false });
             },
@@ -325,7 +327,7 @@ function App() {
         },
       });
     } catch (_error) {
-      showToast('讀取檔案失敗', 'error');
+      showToast(t('toast.readFileFailed'), 'error');
     }
     
     // 重設 input 以便再次選擇同一檔案
@@ -344,8 +346,8 @@ function App() {
               </svg>
             </div>
             <div>
-              <h1 className="text-sm font-bold text-gray-900">Tab Session Lite</h1>
-              <p className="text-xs text-gray-500">Instant Save, Local Only</p>
+              <h1 className="text-sm font-bold text-gray-900">{t('app.title')}</h1>
+              <p className="text-xs text-gray-500">{t('app.subtitle')}</p>
             </div>
           </div>
           
@@ -365,14 +367,14 @@ function App() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                保存中...
+                {t('header.saving')}
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                 </svg>
-                立即保存
+                {t('header.saveButton')}
               </>
             )}
           </button>
@@ -411,22 +413,22 @@ function App() {
             onClick={handleExport}
             disabled={sessions.length === 0}
             className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="匯出所有紀錄為 JSON 檔案"
+            title={t('export.title')}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
-            匯出
+            {t('export.button')}
           </button>
           <button
             onClick={handleImportClick}
             className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            title="從 JSON 檔案匯入紀錄"
+            title={t('import.title')}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            匯入
+            {t('import.button')}
           </button>
           {/* 隱藏的 file input */}
           <input
