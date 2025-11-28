@@ -84,7 +84,7 @@ export default function SessionItem({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
           
-          <div className="min-w-0 flex-1" onClick={(e) => e.stopPropagation()}>
+          <div className="min-w-0 flex-1">
             {isEditing ? (
               <input
                 type="text"
@@ -92,20 +92,25 @@ export default function SessionItem({
                 onChange={(e) => setEditName(e.target.value)}
                 onBlur={handleSaveName}
                 onKeyDown={handleKeyDown}
+                onClick={(e) => e.stopPropagation()}
                 className="w-full text-sm font-medium text-gray-900 border border-blue-400 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 autoFocus
               />
             ) : (
               <div 
                 className="text-sm font-medium text-gray-900 truncate cursor-text hover:text-blue-600"
-                onClick={() => setIsEditing(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditing(true);
+                }}
                 title={t('sessionItem.editNameHint')}
               >
                 {session.name || `Session ${formatDateTime(session.createdAt)}`}
               </div>
             )}
-            <div className="text-xs text-gray-400 mt-0.5">
-              {formatDateTime(session.createdAt)} · {session.windows.length} {t('sessionItem.windows')} · {session.totalTabs} {t('sessionItem.tabs')}
+            <div className="text-xs text-gray-400 mt-0.5 space-y-0.5">
+              <div>{formatDateTime(session.createdAt)}</div>
+              <div>{session.windows.length} {t('sessionItem.windows')} · {session.totalTabs} {t('sessionItem.tabs')}</div>
             </div>
           </div>
         </div>
