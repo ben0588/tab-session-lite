@@ -27,7 +27,7 @@ export default function ConfirmDialog({
         
         {/* 內容 */}
         <div className="px-4 py-4">
-          <p className="text-sm text-gray-600">{message}</p>
+          <p className="text-sm text-gray-600 whitespace-pre-line">{message}</p>
         </div>
         
         {/* 按鈕 */}

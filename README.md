@@ -4,6 +4,9 @@
 
 **核心價值：Instant Save, Local Only.**
 
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](./CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+
 ## 功能特色
 
 - 🚀 **一鍵保存**：瞬間抓取所有視窗的所有分頁
@@ -17,10 +20,14 @@
   - 分頁群組還原：保留分頁群組的名稱、顏色與排列順序
 - ✏️ **自訂管理**：
   - 編輯 Session 名稱，方便辨識與整理
-  - 刪除單一分頁或整個 Session 紀錄
+  - 更新紀錄：用目前分頁覆蓋現有 Session
+  - 刪除單一分頁、整個視窗或整個 Session
   - 清空所有紀錄
-- 🔒 **隱私安全**：資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
-- ⚡ **極速存取**：純本地操作，無網路延遲
+- 📦 **匯出/匯入**：支援 JSON 格式備份與還原
+- 🔒 **隱私安全**：
+  - 資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
+  - 自動排除無痕模式視窗
+- ⚡ **效能優化**：Lazy Loading 背景分頁延遲載入
 
 ## 技術架構
 
@@ -104,6 +111,10 @@ npm run icons
 ## 隱私權政策
 
 [查看隱私權政策](./PRIVACY_POLICY.md)
+
+## 更新紀錄
+
+查看完整的 [更新紀錄 / Changelog](./CHANGELOG.md)
 
 ## 授權
 

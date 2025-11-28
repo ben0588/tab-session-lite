@@ -29,6 +29,9 @@ export const saveSession = async () => {
     // 取得所有視窗（包含位置與大小資訊）
     const windows = await chrome.windows.getAll({ populate: true });
     
+    // 過濾掉無痕模式視窗
+    const normalWindows = windows.filter(win => !win.incognito);
+    
     // 取得所有分頁群組資訊
     let tabGroups = [];
     try {
@@ -58,8 +61,8 @@ export const saveSession = async () => {
       windows: [],
     };
 
-    // 處理每個視窗
-    for (const win of windows) {
+    // 處理每個視窗（排除無痕模式）
+    for (const win of normalWindows) {
       // 過濾掉擴充功能頁面和空分頁
       const tabs = win.tabs
         .filter(tab => tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://'))
@@ -152,6 +155,145 @@ export const deleteSession = async (sessionId) => {
 };
 
 /**
+ * 覆蓋更新 Session（使用目前所有視窗覆蓋指定 Session）
+ * @param {string} sessionId - 要覆蓋的 Session ID
+ * @param {string} sessionName - 保留的 Session 名稱
+ * @returns {Promise<Object|null>} 更新後的 Session 物件
+ */
+export const overwriteSession = async (sessionId, sessionName) => {
+  try {
+    // 取得所有視窗
+    const windows = await chrome.windows.getAll({ populate: true });
+    
+    // 過濾掉無痕模式視窗
+    const normalWindows = windows.filter(win => !win.incognito);
+    
+    // 取得所有分頁群組資訊
+    let tabGroups = [];
+    try {
+      tabGroups = await chrome.tabGroups.query({});
+    } catch (_e) {
+      // tabGroups API 可能不支援
+    }
+
+    // 建立群組 ID 對應表
+    const groupMap = {};
+    tabGroups.forEach(group => {
+      groupMap[group.id] = {
+        title: group.title || '',
+        color: group.color,
+        collapsed: group.collapsed,
+      };
+    });
+
+    // 建立更新的 Session 資料
+    const updatedSession = {
+      id: sessionId,
+      name: sessionName,
+      createdAt: new Date().toISOString(), // 保留原始建立時間可選，這裡選擇更新
+      updatedAt: new Date().toISOString(),
+      totalTabs: 0,
+      windows: [],
+    };
+
+    // 處理每個視窗
+    for (const win of normalWindows) {
+      const tabs = win.tabs
+        .filter(tab => tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://'))
+        .map(tab => ({
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          title: tab.title || '未命名',
+          url: tab.url,
+          favIconUrl: tab.favIconUrl || '',
+          groupId: tab.groupId !== undefined && tab.groupId !== -1 ? tab.groupId : null,
+          groupInfo: tab.groupId !== undefined && tab.groupId !== -1 && groupMap[tab.groupId] 
+            ? groupMap[tab.groupId] 
+            : null,
+        }));
+
+      if (tabs.length > 0) {
+        updatedSession.windows.push({
+          windowId: win.id,
+          left: win.left,
+          top: win.top,
+          width: win.width,
+          height: win.height,
+          state: win.state,
+          tabs,
+        });
+        updatedSession.totalTabs += tabs.length;
+      }
+    }
+
+    if (updatedSession.totalTabs === 0) {
+      return null;
+    }
+
+    // 更新 Sessions 列表
+    const sessions = await loadSessions();
+    const index = sessions.findIndex(s => s.id === sessionId);
+    if (index !== -1) {
+      // 保留原始建立時間
+      updatedSession.createdAt = sessions[index].createdAt;
+      sessions[index] = updatedSession;
+      await chrome.storage.local.set({ [STORAGE_KEY]: sessions });
+      return updatedSession;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('覆蓋更新 Session 失敗:', error);
+    throw error;
+  }
+};
+
+/**
+ * 匯出所有 Sessions 為 JSON
+ * @returns {Promise<string>} JSON 字串
+ */
+export const exportSessions = async () => {
+  const sessions = await loadSessions();
+  return JSON.stringify({
+    version: '1.0.0',
+    exportedAt: new Date().toISOString(),
+    sessions,
+  }, null, 2);
+};
+
+/**
+ * 匯入 Sessions（合併或覆蓋）
+ * @param {string} jsonString - JSON 字串
+ * @param {boolean} overwrite - 是否覆蓋現有資料
+ * @returns {Promise<{success: boolean, imported: number, error?: string}>} 匯入結果
+ */
+export const importSessions = async (jsonString, overwrite = false) => {
+  try {
+    const data = JSON.parse(jsonString);
+    
+    if (!data.sessions || !Array.isArray(data.sessions)) {
+      return { success: false, imported: 0, error: '無效的匯入格式' };
+    }
+
+    if (overwrite) {
+      // 覆蓋模式：完全取代現有資料
+      await chrome.storage.local.set({ [STORAGE_KEY]: data.sessions });
+      return { success: true, imported: data.sessions.length };
+    } else {
+      // 合併模式：新增匯入的資料，保留現有資料
+      const existingSessions = await loadSessions();
+      const existingIds = new Set(existingSessions.map(s => s.id));
+      const newSessions = data.sessions.filter(s => !existingIds.has(s.id));
+      const mergedSessions = [...newSessions, ...existingSessions];
+      await chrome.storage.local.set({ [STORAGE_KEY]: mergedSessions });
+      return { success: true, imported: newSessions.length };
+    }
+  } catch (error) {
+    console.error('匯入 Sessions 失敗:', error);
+    return { success: false, imported: 0, error: error.message || '匯入失敗' };
+  }
+};
+
+/**
  * 清空所有 Sessions
  * @returns {Promise<boolean>} 是否成功
  */
@@ -181,6 +323,60 @@ export const restoreSession = async (session) => {
 };
 
 /**
+ * 檢查視窗位置是否在可用螢幕範圍內
+ * @param {number} left - 視窗左邊位置
+ * @param {number} top - 視窗頂部位置
+ * @param {number} width - 視窗寬度
+ * @param {number} height - 視窗高度
+ * @returns {Object} 調整後的位置，如果無法確定則返回 undefined
+ */
+const getValidWindowBounds = async (left, top, width, height) => {
+  try {
+    // 取得所有顯示器資訊
+    const displays = await chrome.system.display.getInfo();
+    
+    if (!displays || displays.length === 0) {
+      // 無法取得顯示器資訊，不指定位置讓系統決定
+      return { usePosition: false };
+    }
+    
+    // 檢查原始位置是否在任一顯示器範圍內
+    for (const display of displays) {
+      const bounds = display.workArea || display.bounds;
+      // 檢查視窗左上角是否在此顯示器範圍內（允許一些彈性空間）
+      if (left >= bounds.left - 100 && 
+          left < bounds.left + bounds.width &&
+          top >= bounds.top - 100 && 
+          top < bounds.top + bounds.height) {
+        // 位置有效，但確保不會超出邊界太多
+        return {
+          usePosition: true,
+          left: Math.max(bounds.left, Math.min(left, bounds.left + bounds.width - 100)),
+          top: Math.max(bounds.top, Math.min(top, bounds.top + bounds.height - 100)),
+          width: Math.min(width, bounds.width),
+          height: Math.min(height, bounds.height),
+        };
+      }
+    }
+    
+    // 原始位置不在任何顯示器範圍內，使用主顯示器
+    const primaryDisplay = displays.find(d => d.isPrimary) || displays[0];
+    const bounds = primaryDisplay.workArea || primaryDisplay.bounds;
+    
+    return {
+      usePosition: true,
+      left: bounds.left + 50,
+      top: bounds.top + 50,
+      width: Math.min(width || 1200, bounds.width - 100),
+      height: Math.min(height || 800, bounds.height - 100),
+    };
+  } catch (_e) {
+    // 取得顯示器資訊失敗，不指定位置
+    return { usePosition: false };
+  }
+};
+
+/**
  * 恢復單一視窗（開啟該視窗的所有分頁，還原位置和分頁群組）
  * @param {Object} win - 視窗物件
  */
@@ -188,17 +384,25 @@ export const restoreWindow = async (win) => {
   try {
     if (win.tabs.length === 0) return;
 
-    // 建立新視窗並設定位置與大小
+    // 檢查並調整視窗位置
+    const validBounds = await getValidWindowBounds(win.left, win.top, win.width, win.height);
+    
+    // 建立新視窗的選項
     const createOptions = {
       url: win.tabs[0].url,
-      left: win.left,
-      top: win.top,
-      width: win.width,
-      height: win.height,
     };
+    
+    // 只有在位置有效時才指定位置
+    if (validBounds.usePosition) {
+      createOptions.left = validBounds.left;
+      createOptions.top = validBounds.top;
+      createOptions.width = validBounds.width;
+      createOptions.height = validBounds.height;
+    }
 
     // 如果有保存視窗狀態且不是 minimized，設定狀態
-    if (win.state && win.state !== 'minimized') {
+    // 注意：如果指定了 state，可能會覆蓋位置設定
+    if (win.state && win.state !== 'minimized' && win.state !== 'normal') {
       createOptions.state = win.state;
     }
 
@@ -227,14 +431,16 @@ export const restoreWindow = async (win) => {
     }
     
     // 依序開啟剩餘的分頁，並按順序加入群組
+    // 使用 Lazy Loading：設定 active: false，讓 Chrome 延遲載入背景分頁
     for (let i = 1; i < win.tabs.length; i++) {
       const tab = win.tabs[i];
       
-      // 建立分頁，index 確保順序正確
+      // 建立分頁，index 確保順序正確，active: false 實現 Lazy Loading
       const newTab = await chrome.tabs.create({
         windowId: newWindow.id,
         url: tab.url,
-        index: i, // 確保分頁在正確位置
+        index: i,
+        active: false, // 背景開啟，不立即載入內容
       });
       
       // 如果有群組資訊，加入群組

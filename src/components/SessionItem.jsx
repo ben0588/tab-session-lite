@@ -24,6 +24,8 @@ export default function SessionItem({
   onOpenTab,
   onRestoreWindow,
   onUpdateSession,
+  onOverwrite,
+  onDeleteWindow,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -108,11 +110,22 @@ export default function SessionItem({
 
         {/* 操作按鈕 */}
         <div className="flex items-center gap-1 ml-2" onClick={(e) => e.stopPropagation()}>
-          {/* 全部恢復按鈕 */}
+          {/* 全部恢復按鈕 - 使用外連箭頭圖示 */}
           <button
             onClick={() => onRestore(session)}
             className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
             title="全部打開"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </button>
+
+          {/* 更新紀錄按鈕 */}
+          <button
+            onClick={() => onOverwrite(session)}
+            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            title="更新紀錄（覆蓋）"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -136,7 +149,7 @@ export default function SessionItem({
       {isExpanded && (
         <div className="border-t border-gray-100 bg-gray-50 max-h-64 overflow-y-auto">
           {session.windows.map((win, winIndex) => (
-            <div key={winIndex} className="border-b border-gray-100 last:border-b-0">
+            <div key={win.windowId || `win-${winIndex}`} className="border-b border-gray-100 last:border-b-0">
               {/* 視窗標題 */}
               <div className="px-3 py-2 bg-gray-100 text-xs font-medium text-gray-600 flex items-center justify-between">
                 <span>視窗 {winIndex + 1} ({win.tabs.length} 個分頁)</span>
@@ -146,14 +159,24 @@ export default function SessionItem({
                       ({win.left}, {win.top})
                     </span>
                   )}
-                  {/* 單獨打開此視窗按鈕 */}
+                  {/* 單獨打開此視窗按鈕 - 視窗彈出圖示 */}
                   <button
                     onClick={() => onRestoreWindow(win)}
                     className="p-1 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
                     title="打開此視窗"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0v12m0-12l-8 8M4 4v5h.582m.418 9h10a2 2 0 002-2V8" />
+                    </svg>
+                  </button>
+                  {/* 刪除此視窗按鈕 */}
+                  <button
+                    onClick={() => onDeleteWindow(session.id, winIndex)}
+                    className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    title="刪除此視窗"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>

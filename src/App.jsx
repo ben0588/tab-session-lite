@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import SessionList from './components/SessionList';
 import Toast from './components/Toast';
 import Banner from './components/Banner';
@@ -12,6 +12,9 @@ import {
   restoreWindow,
   openSingleTab,
   updateSession,
+  overwriteSession,
+  exportSessions,
+  importSessions,
   formatDateTime,
 } from './utils/storage';
 
@@ -27,7 +30,7 @@ function App() {
     try {
       const data = await loadSessions();
       setSessions(data);
-    } catch (error) {
+    } catch (_error) {
       showToast('載入失敗', 'error');
     } finally {
       setIsLoading(false);
@@ -57,7 +60,7 @@ function App() {
       } else {
         showToast('沒有可保存的分頁', 'info');
       }
-    } catch (error) {
+    } catch (_error) {
       showToast('保存失敗', 'error');
     } finally {
       setIsSaving(false);
@@ -129,7 +132,7 @@ function App() {
     try {
       await restoreSession(session);
       showToast(`已恢復 ${session.totalTabs} 個分頁`);
-    } catch (error) {
+    } catch (_error) {
       showToast('恢復失敗', 'error');
     }
   };
@@ -138,7 +141,7 @@ function App() {
   const handleOpenTab = async (url) => {
     try {
       await openSingleTab(url);
-    } catch (error) {
+    } catch (_error) {
       showToast('開啟分頁失敗', 'error');
     }
   };
@@ -148,9 +151,185 @@ function App() {
     try {
       await restoreWindow(windowData);
       showToast(`已恢復 ${windowData.tabs.length} 個分頁`);
-    } catch (error) {
+    } catch (_error) {
       showToast('恢復視窗失敗', 'error');
     }
+  };
+
+  // 覆蓋更新 Session (用目前分頁覆蓋現有紀錄)
+  const handleOverwrite = (session) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: '更新紀錄確認',
+      message: `確定要使用目前所有開啟的視窗覆蓋「${session.name}」嗎？原有紀錄將被取代。`,
+      onConfirm: async () => {
+        try {
+          const updatedSession = await overwriteSession(session.id, session.name);
+          if (updatedSession) {
+            setSessions((prev) =>
+              prev.map((s) => (s.id === session.id ? updatedSession : s))
+            );
+            showToast(`已更新紀錄 (${updatedSession.totalTabs} 個分頁)`);
+          } else {
+            showToast('沒有可保存的分頁 (無痕視窗不會保存)', 'info');
+          }
+        } catch (_error) {
+          showToast('更新失敗', 'error');
+        }
+        setConfirmDialog({ isOpen: false });
+      },
+      onCancel: () => setConfirmDialog({ isOpen: false }),
+    });
+  };
+
+  // 刪除整個視窗
+  const handleDeleteWindow = (sessionId, windowIndex) => {
+    const session = sessions.find((s) => s.id === sessionId);
+    if (!session) return;
+
+    const windowData = session.windows[windowIndex];
+    const tabCount = windowData?.tabs?.length || 0;
+
+    setConfirmDialog({
+      isOpen: true,
+      title: '刪除視窗確認',
+      message: `確定要刪除這個視窗 (${tabCount} 個分頁) 嗎？`,
+      onConfirm: async () => {
+        const newWindows = session.windows.filter((_, idx) => idx !== windowIndex);
+        const updatedSession = {
+          ...session,
+          windows: newWindows,
+          totalTabs: newWindows.reduce((sum, w) => sum + w.tabs.length, 0),
+        };
+        
+        // 如果刪除後沒有視窗了，刪除整個 Session
+        if (newWindows.length === 0) {
+          const success = await deleteSession(sessionId);
+          if (success) {
+            setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+            showToast('紀錄已刪除 (無剩餘視窗)');
+          } else {
+            showToast('刪除失敗', 'error');
+          }
+        } else {
+          const success = await updateSession(updatedSession);
+          if (success) {
+            setSessions((prev) =>
+              prev.map((s) => (s.id === sessionId ? updatedSession : s))
+            );
+            showToast('視窗已刪除');
+          } else {
+            showToast('刪除失敗', 'error');
+          }
+        }
+        setConfirmDialog({ isOpen: false });
+      },
+      onCancel: () => setConfirmDialog({ isOpen: false }),
+    });
+  };
+
+  // 匯出所有 Sessions 為 JSON
+  const handleExport = async () => {
+    try {
+      const jsonString = await exportSessions();
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tab-sessions-${formatDateTime(new Date())}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('已匯出紀錄');
+    } catch (_error) {
+      showToast('匯出失敗', 'error');
+    }
+  };
+
+  // 匯入 Sessions
+  const fileInputRef = useRef(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImportFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      
+      // 先解析 JSON 確認有效
+      let parsedData;
+      try {
+        parsedData = JSON.parse(text);
+        if (!parsedData.sessions || !Array.isArray(parsedData.sessions)) {
+          showToast('無效的 JSON 格式', 'error');
+          e.target.value = '';
+          return;
+        }
+      } catch {
+        showToast('無效的 JSON 檔案', 'error');
+        e.target.value = '';
+        return;
+      }
+
+      const importCount = parsedData.sessions.length;
+      
+      // 詢問匯入方式
+      setConfirmDialog({
+        isOpen: true,
+        title: '選擇匯入方式',
+        message: `檔案包含 ${importCount} 筆紀錄。\n\n• 合併：保留您現有的紀錄，並新增匯入的資料\n• 取代：清除所有現有紀錄，改用匯入的資料`,
+        confirmText: '合併 (保留現有+新增)',
+        cancelText: '取代 (清空後匯入)',
+        type: 'info',
+        onConfirm: async () => {
+          // 合併模式：保留現有 + 新增匯入的
+          const result = await importSessions(text, false);
+          if (result.success) {
+            await fetchSessions();
+            if (result.imported === 0) {
+              showToast('沒有新增紀錄 (可能已存在相同紀錄)', 'info');
+            } else {
+              showToast(`已新增 ${result.imported} 筆紀錄`);
+            }
+          } else {
+            showToast(result.error || '匯入失敗', 'error');
+          }
+          setConfirmDialog({ isOpen: false });
+        },
+        onCancel: async () => {
+          // 再次確認是否真的要取代
+          setConfirmDialog({
+            isOpen: true,
+            title: '⚠️ 確認取代',
+            message: '這將會刪除您所有現有的紀錄，並以匯入的資料取代。此操作無法復原，確定嗎？',
+            confirmText: '確定取代',
+            cancelText: '取消',
+            type: 'danger',
+            onConfirm: async () => {
+              const result = await importSessions(text, true);
+              if (result.success) {
+                await fetchSessions();
+                showToast(`已匯入 ${result.imported} 筆紀錄 (已取代原有資料)`);
+              } else {
+                showToast(result.error || '匯入失敗', 'error');
+              }
+              setConfirmDialog({ isOpen: false });
+            },
+            onCancel: () => setConfirmDialog({ isOpen: false }),
+          });
+        },
+      });
+    } catch (_error) {
+      showToast('讀取檔案失敗', 'error');
+    }
+    
+    // 重設 input 以便再次選擇同一檔案
+    e.target.value = '';
   };
 
   return (
@@ -218,12 +397,46 @@ function App() {
             onRestoreWindow={handleRestoreWindow}
             onUpdateSession={handleUpdateSession}
             onClearAll={handleClearAll}
+            onOverwrite={handleOverwrite}
+            onDeleteWindow={handleDeleteWindow}
           />
         )}
       </main>
 
       {/* Banner 區塊 */}
       <footer className="flex-shrink-0 px-3 pb-3">
+        {/* 匯出/匯入按鈕 */}
+        <div className="flex gap-2 mb-2">
+          <button
+            onClick={handleExport}
+            disabled={sessions.length === 0}
+            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            title="匯出所有紀錄為 JSON 檔案"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            匯出
+          </button>
+          <button
+            onClick={handleImportClick}
+            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            title="從 JSON 檔案匯入紀錄"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            匯入
+          </button>
+          {/* 隱藏的 file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+        </div>
         <Banner />
       </footer>
 
@@ -243,6 +456,9 @@ function App() {
         message={confirmDialog.message}
         onConfirm={confirmDialog.onConfirm}
         onCancel={confirmDialog.onCancel}
+        confirmText={confirmDialog.confirmText}
+        cancelText={confirmDialog.cancelText}
+        type={confirmDialog.type}
       />
     </div>
   );

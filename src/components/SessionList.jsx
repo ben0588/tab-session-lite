@@ -10,6 +10,8 @@ export default function SessionList({
   onOpenTab,
   onRestoreWindow,
   onUpdateSession,
+  onOverwrite,
+  onDeleteWindow,
   onClearAll 
 }) {
   if (sessions.length === 0) {
@@ -49,6 +51,8 @@ export default function SessionList({
           onOpenTab={onOpenTab}
           onRestoreWindow={onRestoreWindow}
           onUpdateSession={onUpdateSession}
+          onOverwrite={onOverwrite}
+          onDeleteWindow={onDeleteWindow}
         />
       ))}
     </div>
