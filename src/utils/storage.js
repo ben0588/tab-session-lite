@@ -7,6 +7,33 @@
 const STORAGE_KEY = 'sessions';
 
 /**
+ * 檢查 URL 是否可以被擴充功能開啟
+ * Chrome 基於安全考量，禁止擴充功能開啟特殊頁面
+ * @param {string} url - 要檢查的 URL
+ * @returns {boolean} 是否為有效可開啟的 URL
+ */
+const isValidUrl = (url) => {
+  if (!url) return false;
+  
+  // 過濾瀏覽器特殊頁面（無法透過 chrome.tabs.create 開啟）
+  const invalidPrefixes = [
+    'chrome://',           // Chrome 設定頁面
+    'chrome-extension://', // 擴充功能頁面
+    'edge://',             // Edge 瀏覽器設定
+    'brave://',            // Brave 瀏覽器設定
+    'opera://',            // Opera 瀏覽器設定
+    'vivaldi://',          // Vivaldi 瀏覽器設定
+    'about:',              // about:blank 等
+    'view-source:',        // 原始碼檢視
+    'devtools://',         // 開發者工具
+    'data:',               // Data URLs (通常無意義保存)
+    'javascript:',         // JavaScript URLs
+  ];
+  
+  return !invalidPrefixes.some(prefix => url.toLowerCase().startsWith(prefix));
+};
+
+/**
  * 取得所有 Sessions
  * @returns {Promise<Array>} Sessions 陣列
  */
@@ -63,9 +90,9 @@ export const saveSession = async () => {
 
     // 處理每個視窗（排除無痕模式）
     for (const win of normalWindows) {
-      // 過濾掉擴充功能頁面和空分頁
+      // 過濾掉無法開啟的特殊頁面
       const tabs = win.tabs
-        .filter(tab => tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://'))
+        .filter(tab => isValidUrl(tab.url))
         .map(tab => ({
           id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           title: tab.title || '未命名',
