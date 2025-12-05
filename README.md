@@ -4,7 +4,7 @@
 
 **核心價值：Instant Save, Local Only.**
 
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/pdfabpgjkeplngckadhocdioamjbdpdf?label=Version&logo=google-chrome)](https://chromewebstore.google.com/detail/tab-session-lite/pdfabpgjkeplngckadhocdioamjbdpdf)
 
@@ -28,7 +28,9 @@
 -   🔒 **隱私安全**：
     -   資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
     -   自動排除無痕模式視窗
--   ⚡ **效能優化**：Lazy Loading 背景分頁延遲載入
+-   ⚡ **效能優化**：
+    -   Lazy Loading 背景分頁延遲載入
+    -   動態延遲策略，大量分頁時自動調整恢復速度
 -   🌐 **多語系支援**：繁體中文、简体中文、English、日本語、한국어
 
 ## 技術架構

@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.4.0] - 2025-12-05
+
+### 改進 / Improvements
+
+-   **大量分頁恢復優化** - 新增動態延遲策略，根據分頁數量自動調整恢復速度
+-   **Large Session Restore Optimization** - Added dynamic delay strategy that automatically adjusts restore speed based on tab count
+
+    -   少量分頁 (< 50)：極速模式，無延遲
+    -   中等分頁 (50-100)：平衡模式，輕度延遲
+    -   大量分頁 (> 100)：穩定模式，確保完整恢復
+
+-   **錯誤容錯機制** - 單一視窗或分頁恢復失敗不會中斷整體恢復流程
+-   **Error Tolerance** - Single window or tab restore failure won't interrupt the overall restore process
+
+---
+
 ## [1.3.0] - 2025-12-05
 
 ### 新增功能 / New Features

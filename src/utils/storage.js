@@ -361,14 +361,90 @@ export const clearAllSessions = async () => {
 };
 
 /**
- * 恢復整個 Session（開啟所有視窗與分頁，還原位置和分頁群組）
+ * 延遲函式
+ * @param {number} ms - 延遲毫秒數
+ */
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * 計算 Session 的總分頁數
  * @param {Object} session - Session 物件
+ * @returns {number} 總分頁數
+ */
+const getTotalTabCount = (session) => {
+    return session.windows.reduce((total, win) => total + win.tabs.length, 0);
+};
+
+/**
+ * 根據分頁數量決定延遲策略
+ * - 少量 (< 50): 無延遲，維持極速
+ * - 中等 (50-100): 輕度延遲
+ * - 大量 (> 100): 完整延遲
+ * @param {number} totalTabs - 總分頁數
+ * @returns {Object} 延遲設定
+ */
+const getDelayStrategy = (totalTabs) => {
+    if (totalTabs < 50) {
+        // 少量分頁：極速模式，無延遲
+        return {
+            windowDelay: 0,
+            batchSize: 0, // 0 表示不分批
+            batchDelay: 0,
+            tabDelay: 0,
+        };
+    } else if (totalTabs <= 100) {
+        // 中等分頁：輕度延遲
+        return {
+            windowDelay: 200,
+            batchSize: 10,
+            batchDelay: 80,
+            tabDelay: 0,
+        };
+    } else {
+        // 大量分頁：完整延遲確保穩定
+        return {
+            windowDelay: 500,
+            batchSize: 5,
+            batchDelay: 150,
+            tabDelay: 50,
+        };
+    }
+};
+
+/**
+ * 恢復整個 Session（開啟所有視窗與分頁，還原位置和分頁群組）
+ * 根據分頁數量動態調整延遲策略
+ * @param {Object} session - Session 物件
+ * @returns {Promise<{success: number, failed: number}>} 恢復結果統計
  */
 export const restoreSession = async (session) => {
+    let successCount = 0;
+    let failedCount = 0;
+
     try {
-        for (const win of session.windows) {
-            await restoreWindow(win);
+        // 計算總分頁數，決定延遲策略
+        const totalTabs = getTotalTabCount(session);
+        const strategy = getDelayStrategy(totalTabs);
+
+        // 逐一恢復視窗
+        for (let i = 0; i < session.windows.length; i++) {
+            const win = session.windows[i];
+            try {
+                await restoreWindow(win, strategy);
+                successCount++;
+
+                // 視窗之間延遲（如果策略需要）
+                if (strategy.windowDelay > 0 && i < session.windows.length - 1) {
+                    await delay(strategy.windowDelay);
+                }
+            } catch (error) {
+                console.error(`恢復視窗 ${i + 1} 失敗:`, error);
+                failedCount++;
+                // 繼續恢復其他視窗
+            }
         }
+
+        return { success: successCount, failed: failedCount };
     } catch (error) {
         console.error('恢復 Session 失敗:', error);
         throw error;
@@ -433,9 +509,14 @@ const getValidWindowBounds = async (left, top, width, height) => {
 
 /**
  * 恢復單一視窗（開啟該視窗的所有分頁，還原位置和分頁群組）
+ * 根據策略決定是否使用延遲
  * @param {Object} win - 視窗物件
+ * @param {Object} strategy - 延遲策略（可選，預設為極速模式）
  */
-export const restoreWindow = async (win) => {
+export const restoreWindow = async (win, strategy = null) => {
+    // 使用傳入的策略，若無則使用極速模式（無延遲）
+    const { batchSize = 0, batchDelay = 0, tabDelay = 0 } = strategy || {};
+
     try {
         if (win.tabs.length === 0) return;
 
@@ -456,7 +537,6 @@ export const restoreWindow = async (win) => {
         }
 
         // 如果有保存視窗狀態且不是 minimized，設定狀態
-        // 注意：如果指定了 state，可能會覆蓋位置設定
         if (win.state && win.state !== 'minimized' && win.state !== 'normal') {
             createOptions.state = win.state;
         }
@@ -477,7 +557,7 @@ export const restoreWindow = async (win) => {
                 await chrome.tabGroups.update(groupId, {
                     title: win.tabs[0].groupInfo.title || '',
                     color: win.tabs[0].groupInfo.color || 'grey',
-                    collapsed: false, // 先不收合，等全部完成再處理
+                    collapsed: false,
                 });
                 groupMap.set(groupKey, groupId);
             } catch (_e) {
@@ -485,46 +565,70 @@ export const restoreWindow = async (win) => {
             }
         }
 
-        // 依序開啟剩餘的分頁，並按順序加入群組
-        // 使用 Lazy Loading：設定 active: false，讓 Chrome 延遲載入背景分頁
-        for (let i = 1; i < win.tabs.length; i++) {
-            const tab = win.tabs[i];
+        // 處理剩餘的分頁
+        const remainingTabs = win.tabs.slice(1);
 
-            // 建立分頁，index 確保順序正確，active: false 實現 Lazy Loading
-            const newTab = await chrome.tabs.create({
-                windowId: newWindow.id,
-                url: tab.url,
-                index: i,
-                active: false, // 背景開啟，不立即載入內容
-            });
+        // 根據策略決定是否分批處理
+        const useBatching = batchSize > 0;
+        const effectiveBatchSize = useBatching ? batchSize : remainingTabs.length;
 
-            // 如果有群組資訊，加入群組
-            if (tab.groupInfo) {
-                const groupKey = JSON.stringify(tab.groupInfo);
+        for (let batchStart = 0; batchStart < remainingTabs.length; batchStart += effectiveBatchSize) {
+            const batch = remainingTabs.slice(batchStart, batchStart + effectiveBatchSize);
+
+            // 處理這一批分頁
+            for (let j = 0; j < batch.length; j++) {
+                const tab = batch[j];
+                const tabIndex = batchStart + j + 1; // 實際的分頁索引
 
                 try {
-                    if (groupMap.has(groupKey)) {
-                        // 已有此群組，將分頁加入
-                        await chrome.tabs.group({
-                            tabIds: [newTab.id],
-                            groupId: groupMap.get(groupKey),
-                        });
-                    } else {
-                        // 建立新群組
-                        const groupId = await chrome.tabs.group({
-                            tabIds: [newTab.id],
-                            createProperties: { windowId: newWindow.id },
-                        });
-                        await chrome.tabGroups.update(groupId, {
-                            title: tab.groupInfo.title || '',
-                            color: tab.groupInfo.color || 'grey',
-                            collapsed: false,
-                        });
-                        groupMap.set(groupKey, groupId);
+                    // 建立分頁
+                    const newTab = await chrome.tabs.create({
+                        windowId: newWindow.id,
+                        url: tab.url,
+                        index: tabIndex,
+                        active: false,
+                    });
+
+                    // 如果有群組資訊，加入群組
+                    if (tab.groupInfo) {
+                        const groupKey = JSON.stringify(tab.groupInfo);
+
+                        try {
+                            if (groupMap.has(groupKey)) {
+                                await chrome.tabs.group({
+                                    tabIds: [newTab.id],
+                                    groupId: groupMap.get(groupKey),
+                                });
+                            } else {
+                                const groupId = await chrome.tabs.group({
+                                    tabIds: [newTab.id],
+                                    createProperties: { windowId: newWindow.id },
+                                });
+                                await chrome.tabGroups.update(groupId, {
+                                    title: tab.groupInfo.title || '',
+                                    color: tab.groupInfo.color || 'grey',
+                                    collapsed: false,
+                                });
+                                groupMap.set(groupKey, groupId);
+                            }
+                        } catch (_e) {
+                            // 群組操作失敗，忽略
+                        }
                     }
-                } catch (_e) {
-                    // 群組操作失敗，忽略
+
+                    // 單一分頁之間的延遲（僅在策略需要時）
+                    if (tabDelay > 0 && j < batch.length - 1) {
+                        await delay(tabDelay);
+                    }
+                } catch (error) {
+                    console.error(`建立分頁失敗 (index: ${tabIndex}):`, error);
+                    // 單一分頁失敗不影響其他分頁
                 }
+            }
+
+            // 批次之間的延遲（僅在策略需要時）
+            if (useBatching && batchDelay > 0 && batchStart + effectiveBatchSize < remainingTabs.length) {
+                await delay(batchDelay);
             }
         }
 
@@ -547,7 +651,6 @@ export const restoreWindow = async (win) => {
         // 恢復聚焦分頁：切換到保存時的活動分頁
         if (win.activeTabIndex !== undefined && win.activeTabIndex >= 0) {
             try {
-                // 取得新視窗的所有分頁
                 const windowTabs = await chrome.tabs.query({ windowId: newWindow.id });
                 if (windowTabs.length > win.activeTabIndex) {
                     await chrome.tabs.update(windowTabs[win.activeTabIndex].id, { active: true });
