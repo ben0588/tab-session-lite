@@ -13,24 +13,24 @@ const STORAGE_KEY = 'sessions';
  * @returns {boolean} 是否為有效可開啟的 URL
  */
 const isValidUrl = (url) => {
-  if (!url) return false;
-  
-  // 過濾瀏覽器特殊頁面（無法透過 chrome.tabs.create 開啟）
-  const invalidPrefixes = [
-    'chrome://',           // Chrome 設定頁面
-    'chrome-extension://', // 擴充功能頁面
-    'edge://',             // Edge 瀏覽器設定
-    'brave://',            // Brave 瀏覽器設定
-    'opera://',            // Opera 瀏覽器設定
-    'vivaldi://',          // Vivaldi 瀏覽器設定
-    'about:',              // about:blank 等
-    'view-source:',        // 原始碼檢視
-    'devtools://',         // 開發者工具
-    'data:',               // Data URLs (通常無意義保存)
-    'javascript:',         // JavaScript URLs
-  ];
-  
-  return !invalidPrefixes.some(prefix => url.toLowerCase().startsWith(prefix));
+    if (!url) return false;
+
+    // 過濾瀏覽器特殊頁面（無法透過 chrome.tabs.create 開啟）
+    const invalidPrefixes = [
+        'chrome://', // Chrome 設定頁面
+        'chrome-extension://', // 擴充功能頁面
+        'edge://', // Edge 瀏覽器設定
+        'brave://', // Brave 瀏覽器設定
+        'opera://', // Opera 瀏覽器設定
+        'vivaldi://', // Vivaldi 瀏覽器設定
+        'about:', // about:blank 等
+        'view-source:', // 原始碼檢視
+        'devtools://', // 開發者工具
+        'data:', // Data URLs (通常無意義保存)
+        'javascript:', // JavaScript URLs
+    ];
+
+    return !invalidPrefixes.some((prefix) => url.toLowerCase().startsWith(prefix));
 };
 
 /**
@@ -38,13 +38,13 @@ const isValidUrl = (url) => {
  * @returns {Promise<Array>} Sessions 陣列
  */
 export const loadSessions = async () => {
-  try {
-    const result = await chrome.storage.local.get(STORAGE_KEY);
-    return result[STORAGE_KEY] || [];
-  } catch (error) {
-    console.error('載入 Sessions 失敗:', error);
-    return [];
-  }
+    try {
+        const result = await chrome.storage.local.get(STORAGE_KEY);
+        return result[STORAGE_KEY] || [];
+    } catch (error) {
+        console.error('載入 Sessions 失敗:', error);
+        return [];
+    }
 };
 
 /**
@@ -52,91 +52,103 @@ export const loadSessions = async () => {
  * @returns {Promise<Object>} 新建立的 Session 物件
  */
 export const saveSession = async () => {
-  try {
-    // 取得所有視窗（包含位置與大小資訊）
-    const windows = await chrome.windows.getAll({ populate: true });
-    
-    // 過濾掉無痕模式視窗
-    const normalWindows = windows.filter(win => !win.incognito);
-    
-    // 取得所有分頁群組資訊
-    let tabGroups = [];
     try {
-      tabGroups = await chrome.tabGroups.query({});
-    } catch (_e) {
-      // tabGroups API 可能不支援，忽略錯誤
-      console.log('Tab Groups API not available');
-    }
+        // 取得所有視窗（包含位置與大小資訊）
+        const windows = await chrome.windows.getAll({ populate: true });
 
-    // 建立群組 ID 對應表
-    const groupMap = {};
-    tabGroups.forEach(group => {
-      groupMap[group.id] = {
-        title: group.title || '',
-        color: group.color,
-        collapsed: group.collapsed,
-      };
-    });
-    
-    // 建立 Session 資料
-    const timestamp = Date.now();
-    const session = {
-      id: timestamp.toString(),
-      name: `Session ${formatDateTime(new Date(timestamp).toISOString())}`,
-      createdAt: new Date(timestamp).toISOString(),
-      totalTabs: 0,
-      windows: [],
-    };
+        // 過濾掉無痕模式視窗
+        const normalWindows = windows.filter((win) => !win.incognito);
 
-    // 處理每個視窗（排除無痕模式）
-    for (const win of normalWindows) {
-      // 過濾掉無法開啟的特殊頁面
-      const tabs = win.tabs
-        .filter(tab => isValidUrl(tab.url))
-        .map(tab => ({
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          title: tab.title || '未命名',
-          url: tab.url,
-          favIconUrl: tab.favIconUrl || '',
-          // 保存分頁群組資訊
-          groupId: tab.groupId !== undefined && tab.groupId !== -1 ? tab.groupId : null,
-          groupInfo: tab.groupId !== undefined && tab.groupId !== -1 && groupMap[tab.groupId] 
-            ? groupMap[tab.groupId] 
-            : null,
-        }));
+        // 取得所有分頁群組資訊
+        let tabGroups = [];
+        try {
+            tabGroups = await chrome.tabGroups.query({});
+        } catch (_e) {
+            // tabGroups API 可能不支援，忽略錯誤
+            console.log('Tab Groups API not available');
+        }
 
-      if (tabs.length > 0) {
-        session.windows.push({
-          windowId: win.id,
-          // 保存視窗位置與大小
-          left: win.left,
-          top: win.top,
-          width: win.width,
-          height: win.height,
-          state: win.state, // 'normal', 'minimized', 'maximized', 'fullscreen'
-          tabs,
+        // 建立群組 ID 對應表
+        const groupMap = {};
+        tabGroups.forEach((group) => {
+            groupMap[group.id] = {
+                title: group.title || '',
+                color: group.color,
+                collapsed: group.collapsed,
+            };
         });
-        session.totalTabs += tabs.length;
-      }
+
+        // 建立 Session 資料
+        const timestamp = Date.now();
+        const session = {
+            id: timestamp.toString(),
+            name: `Session ${formatDateTime(new Date(timestamp).toISOString())}`,
+            createdAt: new Date(timestamp).toISOString(),
+            totalTabs: 0,
+            windows: [],
+        };
+
+        // 處理每個視窗（排除無痕模式）
+        for (const win of normalWindows) {
+            // 過濾掉無法開啟的特殊頁面
+            const validTabs = win.tabs.filter((tab) => isValidUrl(tab.url));
+
+            // 找出原本的聚焦分頁在過濾後的索引
+            let activeTabIndex = 0;
+            const originalActiveTab = win.tabs.find((tab) => tab.active);
+            if (originalActiveTab && isValidUrl(originalActiveTab.url)) {
+                const activeIndex = validTabs.findIndex((tab) => tab.id === originalActiveTab.id);
+                if (activeIndex !== -1) {
+                    activeTabIndex = activeIndex;
+                }
+            }
+
+            const tabs = validTabs.map((tab) => ({
+                id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                title: tab.title || '未命名',
+                url: tab.url,
+                favIconUrl: tab.favIconUrl || '',
+                // 保存分頁群組資訊
+                groupId: tab.groupId !== undefined && tab.groupId !== -1 ? tab.groupId : null,
+                groupInfo:
+                    tab.groupId !== undefined && tab.groupId !== -1 && groupMap[tab.groupId]
+                        ? groupMap[tab.groupId]
+                        : null,
+            }));
+
+            if (tabs.length > 0) {
+                session.windows.push({
+                    windowId: win.id,
+                    // 保存視窗位置與大小
+                    left: win.left,
+                    top: win.top,
+                    width: win.width,
+                    height: win.height,
+                    state: win.state, // 'normal', 'minimized', 'maximized', 'fullscreen'
+                    activeTabIndex, // 保存聚焦分頁索引
+                    tabs,
+                });
+                session.totalTabs += tabs.length;
+            }
+        }
+
+        // 如果沒有有效分頁，回傳 null
+        if (session.totalTabs === 0) {
+            return null;
+        }
+
+        // 讀取現有 Sessions 並加入新的
+        const existingSessions = await loadSessions();
+        const updatedSessions = [session, ...existingSessions];
+
+        // 儲存到 Chrome Storage
+        await chrome.storage.local.set({ [STORAGE_KEY]: updatedSessions });
+
+        return session;
+    } catch (error) {
+        console.error('保存 Session 失敗:', error);
+        throw error;
     }
-
-    // 如果沒有有效分頁，回傳 null
-    if (session.totalTabs === 0) {
-      return null;
-    }
-
-    // 讀取現有 Sessions 並加入新的
-    const existingSessions = await loadSessions();
-    const updatedSessions = [session, ...existingSessions];
-
-    // 儲存到 Chrome Storage
-    await chrome.storage.local.set({ [STORAGE_KEY]: updatedSessions });
-
-    return session;
-  } catch (error) {
-    console.error('保存 Session 失敗:', error);
-    throw error;
-  }
 };
 
 /**
@@ -145,23 +157,21 @@ export const saveSession = async () => {
  * @returns {Promise<boolean>} 是否成功
  */
 export const updateSession = async (updatedSession) => {
-  try {
-    const sessions = await loadSessions();
-    const index = sessions.findIndex(s => s.id === updatedSession.id);
-    if (index !== -1) {
-      // 重新計算總分頁數
-      updatedSession.totalTabs = updatedSession.windows.reduce(
-        (sum, win) => sum + win.tabs.length, 0
-      );
-      sessions[index] = updatedSession;
-      await chrome.storage.local.set({ [STORAGE_KEY]: sessions });
-      return true;
+    try {
+        const sessions = await loadSessions();
+        const index = sessions.findIndex((s) => s.id === updatedSession.id);
+        if (index !== -1) {
+            // 重新計算總分頁數
+            updatedSession.totalTabs = updatedSession.windows.reduce((sum, win) => sum + win.tabs.length, 0);
+            sessions[index] = updatedSession;
+            await chrome.storage.local.set({ [STORAGE_KEY]: sessions });
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('更新 Session 失敗:', error);
+        return false;
     }
-    return false;
-  } catch (error) {
-    console.error('更新 Session 失敗:', error);
-    return false;
-  }
 };
 
 /**
@@ -170,15 +180,15 @@ export const updateSession = async (updatedSession) => {
  * @returns {Promise<boolean>} 是否成功
  */
 export const deleteSession = async (sessionId) => {
-  try {
-    const sessions = await loadSessions();
-    const updatedSessions = sessions.filter(s => s.id !== sessionId);
-    await chrome.storage.local.set({ [STORAGE_KEY]: updatedSessions });
-    return true;
-  } catch (error) {
-    console.error('刪除 Session 失敗:', error);
-    return false;
-  }
+    try {
+        const sessions = await loadSessions();
+        const updatedSessions = sessions.filter((s) => s.id !== sessionId);
+        await chrome.storage.local.set({ [STORAGE_KEY]: updatedSessions });
+        return true;
+    } catch (error) {
+        console.error('刪除 Session 失敗:', error);
+        return false;
+    }
 };
 
 /**
@@ -188,90 +198,102 @@ export const deleteSession = async (sessionId) => {
  * @returns {Promise<Object|null>} 更新後的 Session 物件
  */
 export const overwriteSession = async (sessionId, sessionName) => {
-  try {
-    // 取得所有視窗
-    const windows = await chrome.windows.getAll({ populate: true });
-    
-    // 過濾掉無痕模式視窗
-    const normalWindows = windows.filter(win => !win.incognito);
-    
-    // 取得所有分頁群組資訊
-    let tabGroups = [];
     try {
-      tabGroups = await chrome.tabGroups.query({});
-    } catch (_e) {
-      // tabGroups API 可能不支援
-    }
+        // 取得所有視窗
+        const windows = await chrome.windows.getAll({ populate: true });
 
-    // 建立群組 ID 對應表
-    const groupMap = {};
-    tabGroups.forEach(group => {
-      groupMap[group.id] = {
-        title: group.title || '',
-        color: group.color,
-        collapsed: group.collapsed,
-      };
-    });
+        // 過濾掉無痕模式視窗
+        const normalWindows = windows.filter((win) => !win.incognito);
 
-    // 建立更新的 Session 資料
-    const updatedSession = {
-      id: sessionId,
-      name: sessionName,
-      createdAt: new Date().toISOString(), // 保留原始建立時間可選，這裡選擇更新
-      updatedAt: new Date().toISOString(),
-      totalTabs: 0,
-      windows: [],
-    };
+        // 取得所有分頁群組資訊
+        let tabGroups = [];
+        try {
+            tabGroups = await chrome.tabGroups.query({});
+        } catch (_e) {
+            // tabGroups API 可能不支援
+        }
 
-    // 處理每個視窗
-    for (const win of normalWindows) {
-      const tabs = win.tabs
-        .filter(tab => tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://'))
-        .map(tab => ({
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          title: tab.title || '未命名',
-          url: tab.url,
-          favIconUrl: tab.favIconUrl || '',
-          groupId: tab.groupId !== undefined && tab.groupId !== -1 ? tab.groupId : null,
-          groupInfo: tab.groupId !== undefined && tab.groupId !== -1 && groupMap[tab.groupId] 
-            ? groupMap[tab.groupId] 
-            : null,
-        }));
-
-      if (tabs.length > 0) {
-        updatedSession.windows.push({
-          windowId: win.id,
-          left: win.left,
-          top: win.top,
-          width: win.width,
-          height: win.height,
-          state: win.state,
-          tabs,
+        // 建立群組 ID 對應表
+        const groupMap = {};
+        tabGroups.forEach((group) => {
+            groupMap[group.id] = {
+                title: group.title || '',
+                color: group.color,
+                collapsed: group.collapsed,
+            };
         });
-        updatedSession.totalTabs += tabs.length;
-      }
-    }
 
-    if (updatedSession.totalTabs === 0) {
-      return null;
-    }
+        // 建立更新的 Session 資料
+        const updatedSession = {
+            id: sessionId,
+            name: sessionName,
+            createdAt: new Date().toISOString(), // 保留原始建立時間可選，這裡選擇更新
+            updatedAt: new Date().toISOString(),
+            totalTabs: 0,
+            windows: [],
+        };
 
-    // 更新 Sessions 列表
-    const sessions = await loadSessions();
-    const index = sessions.findIndex(s => s.id === sessionId);
-    if (index !== -1) {
-      // 保留原始建立時間
-      updatedSession.createdAt = sessions[index].createdAt;
-      sessions[index] = updatedSession;
-      await chrome.storage.local.set({ [STORAGE_KEY]: sessions });
-      return updatedSession;
+        // 處理每個視窗
+        for (const win of normalWindows) {
+            const validTabs = win.tabs.filter((tab) => isValidUrl(tab.url));
+
+            // 找出原本的聚焦分頁在過濾後的索引
+            let activeTabIndex = 0;
+            const originalActiveTab = win.tabs.find((tab) => tab.active);
+            if (originalActiveTab && isValidUrl(originalActiveTab.url)) {
+                const activeIndex = validTabs.findIndex((tab) => tab.id === originalActiveTab.id);
+                if (activeIndex !== -1) {
+                    activeTabIndex = activeIndex;
+                }
+            }
+
+            const tabs = validTabs.map((tab) => ({
+                id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                title: tab.title || '未命名',
+                url: tab.url,
+                favIconUrl: tab.favIconUrl || '',
+                groupId: tab.groupId !== undefined && tab.groupId !== -1 ? tab.groupId : null,
+                groupInfo:
+                    tab.groupId !== undefined && tab.groupId !== -1 && groupMap[tab.groupId]
+                        ? groupMap[tab.groupId]
+                        : null,
+            }));
+
+            if (tabs.length > 0) {
+                updatedSession.windows.push({
+                    windowId: win.id,
+                    left: win.left,
+                    top: win.top,
+                    width: win.width,
+                    height: win.height,
+                    state: win.state,
+                    activeTabIndex, // 保存聚焦分頁索引
+                    tabs,
+                });
+                updatedSession.totalTabs += tabs.length;
+            }
+        }
+
+        if (updatedSession.totalTabs === 0) {
+            return null;
+        }
+
+        // 更新 Sessions 列表
+        const sessions = await loadSessions();
+        const index = sessions.findIndex((s) => s.id === sessionId);
+        if (index !== -1) {
+            // 保留原始建立時間
+            updatedSession.createdAt = sessions[index].createdAt;
+            sessions[index] = updatedSession;
+            await chrome.storage.local.set({ [STORAGE_KEY]: sessions });
+            return updatedSession;
+        }
+
+        return null;
+    } catch (error) {
+        console.error('覆蓋更新 Session 失敗:', error);
+        throw error;
     }
-    
-    return null;
-  } catch (error) {
-    console.error('覆蓋更新 Session 失敗:', error);
-    throw error;
-  }
 };
 
 /**
@@ -279,12 +301,16 @@ export const overwriteSession = async (sessionId, sessionName) => {
  * @returns {Promise<string>} JSON 字串
  */
 export const exportSessions = async () => {
-  const sessions = await loadSessions();
-  return JSON.stringify({
-    version: '1.0.0',
-    exportedAt: new Date().toISOString(),
-    sessions,
-  }, null, 2);
+    const sessions = await loadSessions();
+    return JSON.stringify(
+        {
+            version: '1.0.0',
+            exportedAt: new Date().toISOString(),
+            sessions,
+        },
+        null,
+        2,
+    );
 };
 
 /**
@@ -294,30 +320,30 @@ export const exportSessions = async () => {
  * @returns {Promise<{success: boolean, imported: number, error?: string}>} 匯入結果
  */
 export const importSessions = async (jsonString, overwrite = false) => {
-  try {
-    const data = JSON.parse(jsonString);
-    
-    if (!data.sessions || !Array.isArray(data.sessions)) {
-      return { success: false, imported: 0, error: '無效的匯入格式' };
-    }
+    try {
+        const data = JSON.parse(jsonString);
 
-    if (overwrite) {
-      // 覆蓋模式：完全取代現有資料
-      await chrome.storage.local.set({ [STORAGE_KEY]: data.sessions });
-      return { success: true, imported: data.sessions.length };
-    } else {
-      // 合併模式：新增匯入的資料，保留現有資料
-      const existingSessions = await loadSessions();
-      const existingIds = new Set(existingSessions.map(s => s.id));
-      const newSessions = data.sessions.filter(s => !existingIds.has(s.id));
-      const mergedSessions = [...newSessions, ...existingSessions];
-      await chrome.storage.local.set({ [STORAGE_KEY]: mergedSessions });
-      return { success: true, imported: newSessions.length };
+        if (!data.sessions || !Array.isArray(data.sessions)) {
+            return { success: false, imported: 0, error: '無效的匯入格式' };
+        }
+
+        if (overwrite) {
+            // 覆蓋模式：完全取代現有資料
+            await chrome.storage.local.set({ [STORAGE_KEY]: data.sessions });
+            return { success: true, imported: data.sessions.length };
+        } else {
+            // 合併模式：新增匯入的資料，保留現有資料
+            const existingSessions = await loadSessions();
+            const existingIds = new Set(existingSessions.map((s) => s.id));
+            const newSessions = data.sessions.filter((s) => !existingIds.has(s.id));
+            const mergedSessions = [...newSessions, ...existingSessions];
+            await chrome.storage.local.set({ [STORAGE_KEY]: mergedSessions });
+            return { success: true, imported: newSessions.length };
+        }
+    } catch (error) {
+        console.error('匯入 Sessions 失敗:', error);
+        return { success: false, imported: 0, error: error.message || '匯入失敗' };
     }
-  } catch (error) {
-    console.error('匯入 Sessions 失敗:', error);
-    return { success: false, imported: 0, error: error.message || '匯入失敗' };
-  }
 };
 
 /**
@@ -325,13 +351,13 @@ export const importSessions = async (jsonString, overwrite = false) => {
  * @returns {Promise<boolean>} 是否成功
  */
 export const clearAllSessions = async () => {
-  try {
-    await chrome.storage.local.set({ [STORAGE_KEY]: [] });
-    return true;
-  } catch (error) {
-    console.error('清空 Sessions 失敗:', error);
-    return false;
-  }
+    try {
+        await chrome.storage.local.set({ [STORAGE_KEY]: [] });
+        return true;
+    } catch (error) {
+        console.error('清空 Sessions 失敗:', error);
+        return false;
+    }
 };
 
 /**
@@ -339,14 +365,14 @@ export const clearAllSessions = async () => {
  * @param {Object} session - Session 物件
  */
 export const restoreSession = async (session) => {
-  try {
-    for (const win of session.windows) {
-      await restoreWindow(win);
+    try {
+        for (const win of session.windows) {
+            await restoreWindow(win);
+        }
+    } catch (error) {
+        console.error('恢復 Session 失敗:', error);
+        throw error;
     }
-  } catch (error) {
-    console.error('恢復 Session 失敗:', error);
-    throw error;
-  }
 };
 
 /**
@@ -358,49 +384,51 @@ export const restoreSession = async (session) => {
  * @returns {Object} 調整後的位置，如果無法確定則返回 undefined
  */
 const getValidWindowBounds = async (left, top, width, height) => {
-  try {
-    // 取得所有顯示器資訊
-    const displays = await chrome.system.display.getInfo();
-    
-    if (!displays || displays.length === 0) {
-      // 無法取得顯示器資訊，不指定位置讓系統決定
-      return { usePosition: false };
-    }
-    
-    // 檢查原始位置是否在任一顯示器範圍內
-    for (const display of displays) {
-      const bounds = display.workArea || display.bounds;
-      // 檢查視窗左上角是否在此顯示器範圍內（允許一些彈性空間）
-      if (left >= bounds.left - 100 && 
-          left < bounds.left + bounds.width &&
-          top >= bounds.top - 100 && 
-          top < bounds.top + bounds.height) {
-        // 位置有效，但確保不會超出邊界太多
+    try {
+        // 取得所有顯示器資訊
+        const displays = await chrome.system.display.getInfo();
+
+        if (!displays || displays.length === 0) {
+            // 無法取得顯示器資訊，不指定位置讓系統決定
+            return { usePosition: false };
+        }
+
+        // 檢查原始位置是否在任一顯示器範圍內
+        for (const display of displays) {
+            const bounds = display.workArea || display.bounds;
+            // 檢查視窗左上角是否在此顯示器範圍內（允許一些彈性空間）
+            if (
+                left >= bounds.left - 100 &&
+                left < bounds.left + bounds.width &&
+                top >= bounds.top - 100 &&
+                top < bounds.top + bounds.height
+            ) {
+                // 位置有效，但確保不會超出邊界太多
+                return {
+                    usePosition: true,
+                    left: Math.max(bounds.left, Math.min(left, bounds.left + bounds.width - 100)),
+                    top: Math.max(bounds.top, Math.min(top, bounds.top + bounds.height - 100)),
+                    width: Math.min(width, bounds.width),
+                    height: Math.min(height, bounds.height),
+                };
+            }
+        }
+
+        // 原始位置不在任何顯示器範圍內，使用主顯示器
+        const primaryDisplay = displays.find((d) => d.isPrimary) || displays[0];
+        const bounds = primaryDisplay.workArea || primaryDisplay.bounds;
+
         return {
-          usePosition: true,
-          left: Math.max(bounds.left, Math.min(left, bounds.left + bounds.width - 100)),
-          top: Math.max(bounds.top, Math.min(top, bounds.top + bounds.height - 100)),
-          width: Math.min(width, bounds.width),
-          height: Math.min(height, bounds.height),
+            usePosition: true,
+            left: bounds.left + 50,
+            top: bounds.top + 50,
+            width: Math.min(width || 1200, bounds.width - 100),
+            height: Math.min(height || 800, bounds.height - 100),
         };
-      }
+    } catch (_e) {
+        // 取得顯示器資訊失敗，不指定位置
+        return { usePosition: false };
     }
-    
-    // 原始位置不在任何顯示器範圍內，使用主顯示器
-    const primaryDisplay = displays.find(d => d.isPrimary) || displays[0];
-    const bounds = primaryDisplay.workArea || primaryDisplay.bounds;
-    
-    return {
-      usePosition: true,
-      left: bounds.left + 50,
-      top: bounds.top + 50,
-      width: Math.min(width || 1200, bounds.width - 100),
-      height: Math.min(height || 800, bounds.height - 100),
-    };
-  } catch (_e) {
-    // 取得顯示器資訊失敗，不指定位置
-    return { usePosition: false };
-  }
 };
 
 /**
@@ -408,118 +436,130 @@ const getValidWindowBounds = async (left, top, width, height) => {
  * @param {Object} win - 視窗物件
  */
 export const restoreWindow = async (win) => {
-  try {
-    if (win.tabs.length === 0) return;
+    try {
+        if (win.tabs.length === 0) return;
 
-    // 檢查並調整視窗位置
-    const validBounds = await getValidWindowBounds(win.left, win.top, win.width, win.height);
-    
-    // 建立新視窗的選項
-    const createOptions = {
-      url: win.tabs[0].url,
-    };
-    
-    // 只有在位置有效時才指定位置
-    if (validBounds.usePosition) {
-      createOptions.left = validBounds.left;
-      createOptions.top = validBounds.top;
-      createOptions.width = validBounds.width;
-      createOptions.height = validBounds.height;
-    }
+        // 檢查並調整視窗位置
+        const validBounds = await getValidWindowBounds(win.left, win.top, win.width, win.height);
 
-    // 如果有保存視窗狀態且不是 minimized，設定狀態
-    // 注意：如果指定了 state，可能會覆蓋位置設定
-    if (win.state && win.state !== 'minimized' && win.state !== 'normal') {
-      createOptions.state = win.state;
-    }
+        // 建立新視窗的選項
+        const createOptions = {
+            url: win.tabs[0].url,
+        };
 
-    const newWindow = await chrome.windows.create(createOptions);
-    
-    // 用於追蹤已建立的群組 (groupInfo -> groupId)
-    const groupMap = new Map();
-    
-    // 處理第一個分頁的群組
-    if (win.tabs[0].groupInfo) {
-      const groupKey = JSON.stringify(win.tabs[0].groupInfo);
-      try {
-        const groupId = await chrome.tabs.group({ 
-          tabIds: [newWindow.tabs[0].id],
-          createProperties: { windowId: newWindow.id }
-        });
-        await chrome.tabGroups.update(groupId, {
-          title: win.tabs[0].groupInfo.title || '',
-          color: win.tabs[0].groupInfo.color || 'grey',
-          collapsed: false, // 先不收合，等全部完成再處理
-        });
-        groupMap.set(groupKey, groupId);
-      } catch (_e) {
-        // 群組建立失敗，忽略
-      }
-    }
-    
-    // 依序開啟剩餘的分頁，並按順序加入群組
-    // 使用 Lazy Loading：設定 active: false，讓 Chrome 延遲載入背景分頁
-    for (let i = 1; i < win.tabs.length; i++) {
-      const tab = win.tabs[i];
-      
-      // 建立分頁，index 確保順序正確，active: false 實現 Lazy Loading
-      const newTab = await chrome.tabs.create({
-        windowId: newWindow.id,
-        url: tab.url,
-        index: i,
-        active: false, // 背景開啟，不立即載入內容
-      });
-      
-      // 如果有群組資訊，加入群組
-      if (tab.groupInfo) {
-        const groupKey = JSON.stringify(tab.groupInfo);
-        
-        try {
-          if (groupMap.has(groupKey)) {
-            // 已有此群組，將分頁加入
-            await chrome.tabs.group({ 
-              tabIds: [newTab.id],
-              groupId: groupMap.get(groupKey)
-            });
-          } else {
-            // 建立新群組
-            const groupId = await chrome.tabs.group({ 
-              tabIds: [newTab.id],
-              createProperties: { windowId: newWindow.id }
-            });
-            await chrome.tabGroups.update(groupId, {
-              title: tab.groupInfo.title || '',
-              color: tab.groupInfo.color || 'grey',
-              collapsed: false,
-            });
-            groupMap.set(groupKey, groupId);
-          }
-        } catch (_e) {
-          // 群組操作失敗，忽略
+        // 只有在位置有效時才指定位置
+        if (validBounds.usePosition) {
+            createOptions.left = validBounds.left;
+            createOptions.top = validBounds.top;
+            createOptions.width = validBounds.width;
+            createOptions.height = validBounds.height;
         }
-      }
-    }
-    
-    // 最後處理群組的收合狀態
-    for (let i = 0; i < win.tabs.length; i++) {
-      const tab = win.tabs[i];
-      if (tab.groupInfo && tab.groupInfo.collapsed) {
-        const groupKey = JSON.stringify(tab.groupInfo);
-        const groupId = groupMap.get(groupKey);
-        if (groupId) {
-          try {
-            await chrome.tabGroups.update(groupId, { collapsed: true });
-          } catch (_e) {
-            // 忽略
-          }
+
+        // 如果有保存視窗狀態且不是 minimized，設定狀態
+        // 注意：如果指定了 state，可能會覆蓋位置設定
+        if (win.state && win.state !== 'minimized' && win.state !== 'normal') {
+            createOptions.state = win.state;
         }
-      }
+
+        const newWindow = await chrome.windows.create(createOptions);
+
+        // 用於追蹤已建立的群組 (groupInfo -> groupId)
+        const groupMap = new Map();
+
+        // 處理第一個分頁的群組
+        if (win.tabs[0].groupInfo) {
+            const groupKey = JSON.stringify(win.tabs[0].groupInfo);
+            try {
+                const groupId = await chrome.tabs.group({
+                    tabIds: [newWindow.tabs[0].id],
+                    createProperties: { windowId: newWindow.id },
+                });
+                await chrome.tabGroups.update(groupId, {
+                    title: win.tabs[0].groupInfo.title || '',
+                    color: win.tabs[0].groupInfo.color || 'grey',
+                    collapsed: false, // 先不收合，等全部完成再處理
+                });
+                groupMap.set(groupKey, groupId);
+            } catch (_e) {
+                // 群組建立失敗，忽略
+            }
+        }
+
+        // 依序開啟剩餘的分頁，並按順序加入群組
+        // 使用 Lazy Loading：設定 active: false，讓 Chrome 延遲載入背景分頁
+        for (let i = 1; i < win.tabs.length; i++) {
+            const tab = win.tabs[i];
+
+            // 建立分頁，index 確保順序正確，active: false 實現 Lazy Loading
+            const newTab = await chrome.tabs.create({
+                windowId: newWindow.id,
+                url: tab.url,
+                index: i,
+                active: false, // 背景開啟，不立即載入內容
+            });
+
+            // 如果有群組資訊，加入群組
+            if (tab.groupInfo) {
+                const groupKey = JSON.stringify(tab.groupInfo);
+
+                try {
+                    if (groupMap.has(groupKey)) {
+                        // 已有此群組，將分頁加入
+                        await chrome.tabs.group({
+                            tabIds: [newTab.id],
+                            groupId: groupMap.get(groupKey),
+                        });
+                    } else {
+                        // 建立新群組
+                        const groupId = await chrome.tabs.group({
+                            tabIds: [newTab.id],
+                            createProperties: { windowId: newWindow.id },
+                        });
+                        await chrome.tabGroups.update(groupId, {
+                            title: tab.groupInfo.title || '',
+                            color: tab.groupInfo.color || 'grey',
+                            collapsed: false,
+                        });
+                        groupMap.set(groupKey, groupId);
+                    }
+                } catch (_e) {
+                    // 群組操作失敗，忽略
+                }
+            }
+        }
+
+        // 最後處理群組的收合狀態
+        for (let i = 0; i < win.tabs.length; i++) {
+            const tab = win.tabs[i];
+            if (tab.groupInfo && tab.groupInfo.collapsed) {
+                const groupKey = JSON.stringify(tab.groupInfo);
+                const groupId = groupMap.get(groupKey);
+                if (groupId) {
+                    try {
+                        await chrome.tabGroups.update(groupId, { collapsed: true });
+                    } catch (_e) {
+                        // 忽略
+                    }
+                }
+            }
+        }
+
+        // 恢復聚焦分頁：切換到保存時的活動分頁
+        if (win.activeTabIndex !== undefined && win.activeTabIndex >= 0) {
+            try {
+                // 取得新視窗的所有分頁
+                const windowTabs = await chrome.tabs.query({ windowId: newWindow.id });
+                if (windowTabs.length > win.activeTabIndex) {
+                    await chrome.tabs.update(windowTabs[win.activeTabIndex].id, { active: true });
+                }
+            } catch (_e) {
+                // 聚焦失敗，忽略
+            }
+        }
+    } catch (error) {
+        console.error('恢復視窗失敗:', error);
+        throw error;
     }
-    
-  } catch (error) {
-    console.error('恢復視窗失敗:', error);
-    throw error;
-  }
 };
 
 /**
@@ -527,12 +567,12 @@ export const restoreWindow = async (win) => {
  * @param {string} url - 分頁 URL
  */
 export const openSingleTab = async (url) => {
-  try {
-    await chrome.tabs.create({ url });
-  } catch (error) {
-    console.error('開啟分頁失敗:', error);
-    throw error;
-  }
+    try {
+        await chrome.tabs.create({ url });
+    } catch (error) {
+        console.error('開啟分頁失敗:', error);
+        throw error;
+    }
 };
 
 /**
@@ -541,13 +581,13 @@ export const openSingleTab = async (url) => {
  * @returns {string} 格式化後的字串
  */
 export const formatDateTime = (isoString) => {
-  const date = new Date(isoString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
-  return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
 };

@@ -4,39 +4,40 @@
 
 **核心價值：Instant Save, Local Only.**
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/pdfabpgjkeplngckadhocdioamjbdpdf?label=Version&logo=google-chrome)](https://chromewebstore.google.com/detail/tab-session-lite/pdfabpgjkeplngckadhocdioamjbdpdf)
 
 ## 功能特色
 
-- 🚀 **一鍵保存**：瞬間抓取所有視窗的所有分頁
-- 📋 **歷史列表**：依時間倒序顯示已保存的 Session
-- 🔄 **彈性恢復**：
-  - 全部恢復：一鍵還原所有視窗與分頁
-  - 單一視窗恢復：只恢復特定視窗及其分頁
-  - 單一分頁開啟：點擊特定連結開啟單一頁面
-- 📍 **完整還原**：
-  - 視窗位置還原：恢復時自動還原視窗的原始位置與大小
-  - 分頁群組還原：保留分頁群組的名稱、顏色與排列順序
-- ✏️ **自訂管理**：
-  - 編輯 Session 名稱，方便辨識與整理
-  - 更新紀錄：用目前分頁覆蓋現有 Session
-  - 刪除單一分頁、整個視窗或整個 Session
-  - 清空所有紀錄
-- 📦 **匯出/匯入**：支援 JSON 格式備份與還原
-- 🔒 **隱私安全**：
-  - 資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
-  - 自動排除無痕模式視窗
-- ⚡ **效能優化**：Lazy Loading 背景分頁延遲載入
-- 🌐 **多語系支援**：繁體中文、简体中文、English、日本語、한국어
+-   🚀 **一鍵保存**：瞬間抓取所有視窗的所有分頁
+-   📋 **歷史列表**：依時間倒序顯示已保存的 Session
+-   🔄 **彈性恢復**：
+    -   全部恢復：一鍵還原所有視窗與分頁
+    -   單一視窗恢復：只恢復特定視窗及其分頁
+    -   單一分頁開啟：點擊特定連結開啟單一頁面
+-   📍 **完整還原**：
+    -   視窗位置還原：恢復時自動還原視窗的原始位置與大小
+    -   分頁群組還原：保留分頁群組的名稱、顏色與排列順序
+-   ✏️ **自訂管理**：
+    -   編輯 Session 名稱，方便辨識與整理
+    -   更新紀錄：用目前分頁覆蓋現有 Session
+    -   刪除單一分頁、整個視窗或整個 Session
+    -   清空所有紀錄
+-   📦 **匯出/匯入**：支援 JSON 格式備份與還原
+-   🔒 **隱私安全**：
+    -   資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
+    -   自動排除無痕模式視窗
+-   ⚡ **效能優化**：Lazy Loading 背景分頁延遲載入
+-   🌐 **多語系支援**：繁體中文、简体中文、English、日本語、한국어
 
 ## 技術架構
 
-- **框架**: React 19 + Vite 5
-- **樣式**: Tailwind CSS 3.x
-- **多語系**: react-i18next + i18next
-- **儲存**: chrome.storage.local
-- **Manifest**: V3
+-   **框架**: React 19 + Vite 5
+-   **樣式**: Tailwind CSS 3.x
+-   **多語系**: react-i18next + i18next
+-   **儲存**: chrome.storage.local
+-   **Manifest**: V3
 
 ## 開發指令
 

@@ -1,101 +1,101 @@
 {
-  "app": {
-    "title": "Tab Session Lite",
-    "subtitle": "Instant Save, Local Only"
-  },
-  "header": {
-    "saveButton": "Save Now",
-    "saving": "Saving..."
-  },
-  "sessionList": {
-    "empty": "No saved sessions",
-    "emptyHint": "Click the button above to save current tabs",
-    "clearAll": "Clear All"
-  },
-  "sessionItem": {
-    "window": "Window",
-    "windows": "windows",
-    "tab": "tab",
-    "tabs": "tabs",
-    "editNameHint": "Click to edit name",
-    "restoreAll": "Open All",
-    "updateRecord": "Update Record",
-    "delete": "Delete",
-    "openWindow": "Open this window",
-    "deleteWindow": "Delete this window",
-    "deleteTab": "Delete this tab",
-    "tabGroup": "Tab Group"
-  },
-  "export": {
-    "button": "Export",
-    "title": "Export all records as JSON file"
-  },
-  "import": {
-    "button": "Import",
-    "title": "Import records from JSON file",
-    "dialogTitle": "Choose Import Method",
-    "dialogMessage": "File contains {{count}} records.\n\n• Merge: Keep existing records and add imported data\n• Replace: Clear all existing records and use imported data",
-    "mergeButton": "Merge (Keep + Add)",
-    "replaceButton": "Replace (Clear + Import)",
-    "confirmReplaceTitle": "⚠️ Confirm Replace",
-    "confirmReplaceMessage": "This will delete all your existing records and replace with imported data. This action cannot be undone. Are you sure?",
-    "confirmReplaceButton": "Confirm Replace"
-  },
-  "banner": {
-    "openSource": "Source",
-    "donate": "Donate",
-    "privacy": "Privacy",
-    "openSourceTitle": "View source code on GitHub",
-    "donateTitle": "Buy me a coffee",
-    "privacyTitle": "Privacy Policy",
-    "version": "v1.2.0 · Local Only · No Tracking"
-  },
-  "language": {
-    "title": "Language",
-    "zh-Hant": "繁體中文",
-    "zh-Hans": "简体中文",
-    "en": "English",
-    "ja": "日本語",
-    "ko": "한국어"
-  },
-  "dialog": {
-    "confirm": "Confirm",
-    "cancel": "Cancel",
-    "deleteTitle": "Confirm Delete",
-    "deleteMessage": "Are you sure you want to delete this session? This action cannot be undone.",
-    "clearAllTitle": "Clear All",
-    "clearAllMessage": "Are you sure you want to clear all {{count}} sessions? This action cannot be undone.",
-    "updateTitle": "Confirm Update",
-    "updateMessage": "Are you sure you want to overwrite \"{{name}}\" with all currently open windows? The original record will be replaced.",
-    "deleteWindowTitle": "Confirm Delete Window",
-    "deleteWindowMessage": "Are you sure you want to delete this window ({{count}} tabs)?"
-  },
-  "toast": {
-    "loadFailed": "Failed to load",
-    "saved": "Saved {{count}} tabs",
-    "noTabs": "No tabs to save",
-    "saveFailed": "Failed to save",
-    "updateFailed": "Failed to update",
-    "deleted": "Deleted",
-    "deleteFailed": "Failed to delete",
-    "clearedAll": "Cleared all records",
-    "clearFailed": "Failed to clear",
-    "restored": "Restored {{count}} tabs",
-    "restoreFailed": "Failed to restore",
-    "openTabFailed": "Failed to open tab",
-    "restoreWindowFailed": "Failed to restore window",
-    "updated": "Updated record ({{count}} tabs)",
-    "noTabsIncognito": "No tabs to save (incognito windows are excluded)",
-    "recordDeleted": "Record deleted (no remaining windows)",
-    "windowDeleted": "Window deleted",
-    "exported": "Exported records",
-    "exportFailed": "Failed to export",
-    "invalidJson": "Invalid JSON format",
-    "invalidJsonFile": "Invalid JSON file",
-    "noNewRecords": "No new records added (may already exist)",
-    "imported": "Added {{count}} records",
-    "importedReplaced": "Imported {{count}} records (replaced existing)",
-    "importFailed": "Failed to import",
-    "readFileFailed": "Failed to read file"
-  }
+    "app": {
+        "title": "Tab Session Lite",
+        "subtitle": "Instant Save, Local Only"
+    },
+    "header": {
+        "saveButton": "Save Now",
+        "saving": "Saving..."
+    },
+    "sessionList": {
+        "empty": "No saved sessions",
+        "emptyHint": "Click the button above to save current tabs",
+        "clearAll": "Clear All"
+    },
+    "sessionItem": {
+        "window": "Window",
+        "windows": "windows",
+        "tab": "tab",
+        "tabs": "tabs",
+        "editNameHint": "Click to edit name",
+        "restoreAll": "Open All",
+        "updateRecord": "Update Record",
+        "delete": "Delete",
+        "openWindow": "Open this window",
+        "deleteWindow": "Delete this window",
+        "deleteTab": "Delete this tab",
+        "tabGroup": "Tab Group"
+    },
+    "export": {
+        "button": "Export",
+        "title": "Export all records as JSON file"
+    },
+    "import": {
+        "button": "Import",
+        "title": "Import records from JSON file",
+        "dialogTitle": "Choose Import Method",
+        "dialogMessage": "File contains {{count}} records.\n\n• Merge: Keep existing records and add imported data\n• Replace: Clear all existing records and use imported data",
+        "mergeButton": "Merge (Keep + Add)",
+        "replaceButton": "Replace (Clear + Import)",
+        "confirmReplaceTitle": "⚠️ Confirm Replace",
+        "confirmReplaceMessage": "This will delete all your existing records and replace with imported data. This action cannot be undone. Are you sure?",
+        "confirmReplaceButton": "Confirm Replace"
+    },
+    "banner": {
+        "openSource": "Source",
+        "donate": "Donate",
+        "privacy": "Privacy",
+        "openSourceTitle": "View source code on GitHub",
+        "donateTitle": "Buy me a coffee",
+        "privacyTitle": "Privacy Policy",
+        "version": "v1.3.0 · Local Only · No Tracking"
+    },
+    "language": {
+        "title": "Language",
+        "zh-Hant": "繁體中文",
+        "zh-Hans": "简体中文",
+        "en": "English",
+        "ja": "日本語",
+        "ko": "한국어"
+    },
+    "dialog": {
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "deleteTitle": "Confirm Delete",
+        "deleteMessage": "Are you sure you want to delete this session? This action cannot be undone.",
+        "clearAllTitle": "Clear All",
+        "clearAllMessage": "Are you sure you want to clear all {{count}} sessions? This action cannot be undone.",
+        "updateTitle": "Confirm Update",
+        "updateMessage": "Are you sure you want to overwrite \"{{name}}\" with all currently open windows? The original record will be replaced.",
+        "deleteWindowTitle": "Confirm Delete Window",
+        "deleteWindowMessage": "Are you sure you want to delete this window ({{count}} tabs)?"
+    },
+    "toast": {
+        "loadFailed": "Failed to load",
+        "saved": "Saved {{count}} tabs",
+        "noTabs": "No tabs to save",
+        "saveFailed": "Failed to save",
+        "updateFailed": "Failed to update",
+        "deleted": "Deleted",
+        "deleteFailed": "Failed to delete",
+        "clearedAll": "Cleared all records",
+        "clearFailed": "Failed to clear",
+        "restored": "Restored {{count}} tabs",
+        "restoreFailed": "Failed to restore",
+        "openTabFailed": "Failed to open tab",
+        "restoreWindowFailed": "Failed to restore window",
+        "updated": "Updated record ({{count}} tabs)",
+        "noTabsIncognito": "No tabs to save (incognito windows are excluded)",
+        "recordDeleted": "Record deleted (no remaining windows)",
+        "windowDeleted": "Window deleted",
+        "exported": "Exported records",
+        "exportFailed": "Failed to export",
+        "invalidJson": "Invalid JSON format",
+        "invalidJsonFile": "Invalid JSON file",
+        "noNewRecords": "No new records added (may already exist)",
+        "imported": "Added {{count}} records",
+        "importedReplaced": "Imported {{count}} records (replaced existing)",
+        "importFailed": "Failed to import",
+        "readFileFailed": "Failed to read file"
+    }
 }

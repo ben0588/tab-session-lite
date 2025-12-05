@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Tab Session Lite - 分页管理与一键保存",
+        "description": "Extension name for Simplified Chinese users"
+    },
+    "extDescription": {
+        "message": "极致轻量、速度优先的分页 Session 管理工具。Instant Save, Local Only.",
+        "description": "Extension description for Simplified Chinese users"
+    }
+}

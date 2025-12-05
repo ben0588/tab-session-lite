@@ -1,101 +1,101 @@
 {
-  "app": {
-    "title": "Tab Session Lite",
-    "subtitle": "即時保存、ローカル保存"
-  },
-  "header": {
-    "saveButton": "今すぐ保存",
-    "saving": "保存中..."
-  },
-  "sessionList": {
-    "empty": "保存されたセッションがありません",
-    "emptyHint": "上のボタンをクリックして現在のタブを保存",
-    "clearAll": "すべてクリア"
-  },
-  "sessionItem": {
-    "window": "ウィンドウ",
-    "windows": "ウィンドウ",
-    "tab": "タブ",
-    "tabs": "タブ",
-    "editNameHint": "クリックして名前を編集",
-    "restoreAll": "すべて開く",
-    "updateRecord": "記録を更新",
-    "delete": "削除",
-    "openWindow": "このウィンドウを開く",
-    "deleteWindow": "このウィンドウを削除",
-    "deleteTab": "このタブを削除",
-    "tabGroup": "タブグループ"
-  },
-  "export": {
-    "button": "エクスポート",
-    "title": "すべての記録をJSONファイルとしてエクスポート"
-  },
-  "import": {
-    "button": "インポート",
-    "title": "JSONファイルから記録をインポート",
-    "dialogTitle": "インポート方法を選択",
-    "dialogMessage": "ファイルに {{count}} 件の記録が含まれています。\n\n• マージ：既存の記録を保持し、インポートデータを追加\n• 置換：既存の記録をすべて削除し、インポートデータを使用",
-    "mergeButton": "マージ (既存保持+追加)",
-    "replaceButton": "置換 (クリア+インポート)",
-    "confirmReplaceTitle": "⚠️ 置換の確認",
-    "confirmReplaceMessage": "これにより既存の記録がすべて削除され、インポートデータに置き換えられます。この操作は元に戻せません。よろしいですか？",
-    "confirmReplaceButton": "置換を確認"
-  },
-  "banner": {
-    "openSource": "GitHub",
-    "donate": "寄付",
-    "privacy": "隱私",
-    "openSourceTitle": "GitHubでソースコードを見る",
-    "donateTitle": "コーヒーをおごる",
-    "privacyTitle": "プライバシーポリシー",
-    "version": "v1.2.0 · ローカル保存 · トラッキングなし"
-  },
-  "language": {
-    "title": "言語",
-    "zh-Hant": "繁體中文",
-    "zh-Hans": "简体中文",
-    "en": "English",
-    "ja": "日本語",
-    "ko": "한국어"
-  },
-  "dialog": {
-    "confirm": "確認",
-    "cancel": "キャンセル",
-    "deleteTitle": "削除の確認",
-    "deleteMessage": "このセッションを削除してもよろしいですか？この操作は元に戻せません。",
-    "clearAllTitle": "すべてクリア",
-    "clearAllMessage": "{{count}} 件のセッションをすべてクリアしてもよろしいですか？この操作は元に戻せません。",
-    "updateTitle": "更新の確認",
-    "updateMessage": "現在開いているすべてのウィンドウで「{{name}}」を上書きしてもよろしいですか？元の記録は置き換えられます。",
-    "deleteWindowTitle": "ウィンドウ削除の確認",
-    "deleteWindowMessage": "このウィンドウ ({{count}} タブ) を削除してもよろしいですか？"
-  },
-  "toast": {
-    "loadFailed": "読み込み失敗",
-    "saved": "{{count}} 個のタブを保存しました",
-    "noTabs": "保存するタブがありません",
-    "saveFailed": "保存に失敗しました",
-    "updateFailed": "更新に失敗しました",
-    "deleted": "削除しました",
-    "deleteFailed": "削除に失敗しました",
-    "clearedAll": "すべての記録をクリアしました",
-    "clearFailed": "クリアに失敗しました",
-    "restored": "{{count}} 個のタブを復元しました",
-    "restoreFailed": "復元に失敗しました",
-    "openTabFailed": "タブを開くことに失敗しました",
-    "restoreWindowFailed": "ウィンドウの復元に失敗しました",
-    "updated": "記録を更新しました ({{count}} タブ)",
-    "noTabsIncognito": "保存するタブがありません（シークレットウィンドウは除外されます）",
-    "recordDeleted": "記録を削除しました（残りウィンドウなし）",
-    "windowDeleted": "ウィンドウを削除しました",
-    "exported": "記録をエクスポートしました",
-    "exportFailed": "エクスポートに失敗しました",
-    "invalidJson": "無効なJSON形式",
-    "invalidJsonFile": "無効なJSONファイル",
-    "noNewRecords": "新しい記録は追加されませんでした（既に存在する可能性があります）",
-    "imported": "{{count}} 件の記録を追加しました",
-    "importedReplaced": "{{count}} 件の記録をインポートしました（既存を置換）",
-    "importFailed": "インポートに失敗しました",
-    "readFileFailed": "ファイルの読み取りに失敗しました"
-  }
+    "app": {
+        "title": "Tab Session Lite",
+        "subtitle": "即時保存、ローカル保存"
+    },
+    "header": {
+        "saveButton": "今すぐ保存",
+        "saving": "保存中..."
+    },
+    "sessionList": {
+        "empty": "保存されたセッションがありません",
+        "emptyHint": "上のボタンをクリックして現在のタブを保存",
+        "clearAll": "すべてクリア"
+    },
+    "sessionItem": {
+        "window": "ウィンドウ",
+        "windows": "ウィンドウ",
+        "tab": "タブ",
+        "tabs": "タブ",
+        "editNameHint": "クリックして名前を編集",
+        "restoreAll": "すべて開く",
+        "updateRecord": "記録を更新",
+        "delete": "削除",
+        "openWindow": "このウィンドウを開く",
+        "deleteWindow": "このウィンドウを削除",
+        "deleteTab": "このタブを削除",
+        "tabGroup": "タブグループ"
+    },
+    "export": {
+        "button": "エクスポート",
+        "title": "すべての記録をJSONファイルとしてエクスポート"
+    },
+    "import": {
+        "button": "インポート",
+        "title": "JSONファイルから記録をインポート",
+        "dialogTitle": "インポート方法を選択",
+        "dialogMessage": "ファイルに {{count}} 件の記録が含まれています。\n\n• マージ：既存の記録を保持し、インポートデータを追加\n• 置換：既存の記録をすべて削除し、インポートデータを使用",
+        "mergeButton": "マージ (既存保持+追加)",
+        "replaceButton": "置換 (クリア+インポート)",
+        "confirmReplaceTitle": "⚠️ 置換の確認",
+        "confirmReplaceMessage": "これにより既存の記録がすべて削除され、インポートデータに置き換えられます。この操作は元に戻せません。よろしいですか？",
+        "confirmReplaceButton": "置換を確認"
+    },
+    "banner": {
+        "openSource": "GitHub",
+        "donate": "寄付",
+        "privacy": "隱私",
+        "openSourceTitle": "GitHubでソースコードを見る",
+        "donateTitle": "コーヒーをおごる",
+        "privacyTitle": "プライバシーポリシー",
+        "version": "v1.3.0 · ローカル保存 · トラッキングなし"
+    },
+    "language": {
+        "title": "言語",
+        "zh-Hant": "繁體中文",
+        "zh-Hans": "简体中文",
+        "en": "English",
+        "ja": "日本語",
+        "ko": "한국어"
+    },
+    "dialog": {
+        "confirm": "確認",
+        "cancel": "キャンセル",
+        "deleteTitle": "削除の確認",
+        "deleteMessage": "このセッションを削除してもよろしいですか？この操作は元に戻せません。",
+        "clearAllTitle": "すべてクリア",
+        "clearAllMessage": "{{count}} 件のセッションをすべてクリアしてもよろしいですか？この操作は元に戻せません。",
+        "updateTitle": "更新の確認",
+        "updateMessage": "現在開いているすべてのウィンドウで「{{name}}」を上書きしてもよろしいですか？元の記録は置き換えられます。",
+        "deleteWindowTitle": "ウィンドウ削除の確認",
+        "deleteWindowMessage": "このウィンドウ ({{count}} タブ) を削除してもよろしいですか？"
+    },
+    "toast": {
+        "loadFailed": "読み込み失敗",
+        "saved": "{{count}} 個のタブを保存しました",
+        "noTabs": "保存するタブがありません",
+        "saveFailed": "保存に失敗しました",
+        "updateFailed": "更新に失敗しました",
+        "deleted": "削除しました",
+        "deleteFailed": "削除に失敗しました",
+        "clearedAll": "すべての記録をクリアしました",
+        "clearFailed": "クリアに失敗しました",
+        "restored": "{{count}} 個のタブを復元しました",
+        "restoreFailed": "復元に失敗しました",
+        "openTabFailed": "タブを開くことに失敗しました",
+        "restoreWindowFailed": "ウィンドウの復元に失敗しました",
+        "updated": "記録を更新しました ({{count}} タブ)",
+        "noTabsIncognito": "保存するタブがありません（シークレットウィンドウは除外されます）",
+        "recordDeleted": "記録を削除しました（残りウィンドウなし）",
+        "windowDeleted": "ウィンドウを削除しました",
+        "exported": "記録をエクスポートしました",
+        "exportFailed": "エクスポートに失敗しました",
+        "invalidJson": "無効なJSON形式",
+        "invalidJsonFile": "無効なJSONファイル",
+        "noNewRecords": "新しい記録は追加されませんでした（既に存在する可能性があります）",
+        "imported": "{{count}} 件の記録を追加しました",
+        "importedReplaced": "{{count}} 件の記録をインポートしました（既存を置換）",
+        "importFailed": "インポートに失敗しました",
+        "readFileFailed": "ファイルの読み取りに失敗しました"
+    }
 }

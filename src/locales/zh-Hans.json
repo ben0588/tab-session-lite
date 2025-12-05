@@ -1,101 +1,101 @@
 {
-  "app": {
-    "title": "Tab Session Lite",
-    "subtitle": "即时保存，本地存储"
-  },
-  "header": {
-    "saveButton": "立即保存",
-    "saving": "保存中..."
-  },
-  "sessionList": {
-    "empty": "暂无保存的 Session",
-    "emptyHint": "点击上方按钮保存当前的标签页",
-    "clearAll": "清空全部"
-  },
-  "sessionItem": {
-    "window": "窗口",
-    "windows": "个窗口",
-    "tab": "标签页",
-    "tabs": "个标签页",
-    "editNameHint": "点击编辑名称",
-    "restoreAll": "全部打开",
-    "updateRecord": "更新记录（覆盖）",
-    "delete": "删除",
-    "openWindow": "打开此窗口",
-    "deleteWindow": "删除此窗口",
-    "deleteTab": "删除此标签页",
-    "tabGroup": "标签页分组"
-  },
-  "export": {
-    "button": "导出",
-    "title": "导出所有记录为 JSON 文件"
-  },
-  "import": {
-    "button": "导入",
-    "title": "从 JSON 文件导入记录",
-    "dialogTitle": "选择导入方式",
-    "dialogMessage": "文件包含 {{count}} 条记录。\n\n• 合并：保留您现有的记录，并新增导入的数据\n• 替换：清除所有现有记录，改用导入的数据",
-    "mergeButton": "合并 (保留现有+新增)",
-    "replaceButton": "替换 (清空后导入)",
-    "confirmReplaceTitle": "⚠️ 确认替换",
-    "confirmReplaceMessage": "这将会删除您所有现有的记录，并以导入的数据替换。此操作无法撤销，确定吗？",
-    "confirmReplaceButton": "确定替换"
-  },
-  "banner": {
-    "openSource": "开源",
-    "donate": "赞助",
-    "privacy": "隐私",
-    "openSourceTitle": "在 GitHub 上查看源代码",
-    "donateTitle": "请我喝杯咖啡",
-    "privacyTitle": "隐私政策",
-    "version": "v1.2.0 · 本地存储 · 无追踪"
-  },
-  "language": {
-    "title": "语言",
-    "zh-Hant": "繁體中文",
-    "zh-Hans": "简体中文",
-    "en": "English",
-    "ja": "日本語",
-    "ko": "한국어"
-  },
-  "dialog": {
-    "confirm": "确认",
-    "cancel": "取消",
-    "deleteTitle": "删除确认",
-    "deleteMessage": "确定要删除这个 Session 吗？此操作无法撤销。",
-    "clearAllTitle": "清空全部",
-    "clearAllMessage": "确定要清空所有 {{count}} 个 Session 吗？此操作无法撤销。",
-    "updateTitle": "更新记录确认",
-    "updateMessage": "确定要使用当前所有打开的窗口覆盖「{{name}}」吗？原有记录将被替换。",
-    "deleteWindowTitle": "删除窗口确认",
-    "deleteWindowMessage": "确定要删除这个窗口 ({{count}} 个标签页) 吗？"
-  },
-  "toast": {
-    "loadFailed": "加载失败",
-    "saved": "已保存 {{count}} 个标签页",
-    "noTabs": "没有可保存的标签页",
-    "saveFailed": "保存失败",
-    "updateFailed": "更新失败",
-    "deleted": "已删除",
-    "deleteFailed": "删除失败",
-    "clearedAll": "已清空所有记录",
-    "clearFailed": "清空失败",
-    "restored": "已恢复 {{count}} 个标签页",
-    "restoreFailed": "恢复失败",
-    "openTabFailed": "打开标签页失败",
-    "restoreWindowFailed": "恢复窗口失败",
-    "updated": "已更新记录 ({{count}} 个标签页)",
-    "noTabsIncognito": "没有可保存的标签页 (无痕窗口不会保存)",
-    "recordDeleted": "记录已删除 (无剩余窗口)",
-    "windowDeleted": "窗口已删除",
-    "exported": "已导出记录",
-    "exportFailed": "导出失败",
-    "invalidJson": "无效的 JSON 格式",
-    "invalidJsonFile": "无效的 JSON 文件",
-    "noNewRecords": "没有新增记录 (可能已存在相同记录)",
-    "imported": "已新增 {{count}} 条记录",
-    "importedReplaced": "已导入 {{count}} 条记录 (已替换原有数据)",
-    "importFailed": "导入失败",
-    "readFileFailed": "读取文件失败"
-  }
+    "app": {
+        "title": "Tab Session Lite",
+        "subtitle": "即时保存，本地存储"
+    },
+    "header": {
+        "saveButton": "立即保存",
+        "saving": "保存中..."
+    },
+    "sessionList": {
+        "empty": "暂无保存的 Session",
+        "emptyHint": "点击上方按钮保存当前的标签页",
+        "clearAll": "清空全部"
+    },
+    "sessionItem": {
+        "window": "窗口",
+        "windows": "个窗口",
+        "tab": "标签页",
+        "tabs": "个标签页",
+        "editNameHint": "点击编辑名称",
+        "restoreAll": "全部打开",
+        "updateRecord": "更新记录（覆盖）",
+        "delete": "删除",
+        "openWindow": "打开此窗口",
+        "deleteWindow": "删除此窗口",
+        "deleteTab": "删除此标签页",
+        "tabGroup": "标签页分组"
+    },
+    "export": {
+        "button": "导出",
+        "title": "导出所有记录为 JSON 文件"
+    },
+    "import": {
+        "button": "导入",
+        "title": "从 JSON 文件导入记录",
+        "dialogTitle": "选择导入方式",
+        "dialogMessage": "文件包含 {{count}} 条记录。\n\n• 合并：保留您现有的记录，并新增导入的数据\n• 替换：清除所有现有记录，改用导入的数据",
+        "mergeButton": "合并 (保留现有+新增)",
+        "replaceButton": "替换 (清空后导入)",
+        "confirmReplaceTitle": "⚠️ 确认替换",
+        "confirmReplaceMessage": "这将会删除您所有现有的记录，并以导入的数据替换。此操作无法撤销，确定吗？",
+        "confirmReplaceButton": "确定替换"
+    },
+    "banner": {
+        "openSource": "开源",
+        "donate": "赞助",
+        "privacy": "隐私",
+        "openSourceTitle": "在 GitHub 上查看源代码",
+        "donateTitle": "请我喝杯咖啡",
+        "privacyTitle": "隐私政策",
+        "version": "v1.3.0 · 本地存储 · 无追踪"
+    },
+    "language": {
+        "title": "语言",
+        "zh-Hant": "繁體中文",
+        "zh-Hans": "简体中文",
+        "en": "English",
+        "ja": "日本語",
+        "ko": "한국어"
+    },
+    "dialog": {
+        "confirm": "确认",
+        "cancel": "取消",
+        "deleteTitle": "删除确认",
+        "deleteMessage": "确定要删除这个 Session 吗？此操作无法撤销。",
+        "clearAllTitle": "清空全部",
+        "clearAllMessage": "确定要清空所有 {{count}} 个 Session 吗？此操作无法撤销。",
+        "updateTitle": "更新记录确认",
+        "updateMessage": "确定要使用当前所有打开的窗口覆盖「{{name}}」吗？原有记录将被替换。",
+        "deleteWindowTitle": "删除窗口确认",
+        "deleteWindowMessage": "确定要删除这个窗口 ({{count}} 个标签页) 吗？"
+    },
+    "toast": {
+        "loadFailed": "加载失败",
+        "saved": "已保存 {{count}} 个标签页",
+        "noTabs": "没有可保存的标签页",
+        "saveFailed": "保存失败",
+        "updateFailed": "更新失败",
+        "deleted": "已删除",
+        "deleteFailed": "删除失败",
+        "clearedAll": "已清空所有记录",
+        "clearFailed": "清空失败",
+        "restored": "已恢复 {{count}} 个标签页",
+        "restoreFailed": "恢复失败",
+        "openTabFailed": "打开标签页失败",
+        "restoreWindowFailed": "恢复窗口失败",
+        "updated": "已更新记录 ({{count}} 个标签页)",
+        "noTabsIncognito": "没有可保存的标签页 (无痕窗口不会保存)",
+        "recordDeleted": "记录已删除 (无剩余窗口)",
+        "windowDeleted": "窗口已删除",
+        "exported": "已导出记录",
+        "exportFailed": "导出失败",
+        "invalidJson": "无效的 JSON 格式",
+        "invalidJsonFile": "无效的 JSON 文件",
+        "noNewRecords": "没有新增记录 (可能已存在相同记录)",
+        "imported": "已新增 {{count}} 条记录",
+        "importedReplaced": "已导入 {{count}} 条记录 (已替换原有数据)",
+        "importFailed": "导入失败",
+        "readFileFailed": "读取文件失败"
+    }
 }

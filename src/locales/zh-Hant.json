@@ -1,101 +1,101 @@
 {
-  "app": {
-    "title": "Tab Session Lite",
-    "subtitle": "Instant Save, Local Only"
-  },
-  "header": {
-    "saveButton": "立即保存",
-    "saving": "保存中..."
-  },
-  "sessionList": {
-    "empty": "尚無保存的 Session",
-    "emptyHint": "點擊上方按鈕保存目前的分頁",
-    "clearAll": "清空全部"
-  },
-  "sessionItem": {
-    "window": "視窗",
-    "windows": "個視窗",
-    "tab": "分頁",
-    "tabs": "個分頁",
-    "editNameHint": "點擊編輯名稱",
-    "restoreAll": "全部打開",
-    "updateRecord": "更新紀錄（覆蓋）",
-    "delete": "刪除",
-    "openWindow": "打開此視窗",
-    "deleteWindow": "刪除此視窗",
-    "deleteTab": "刪除此分頁",
-    "tabGroup": "分頁群組"
-  },
-  "export": {
-    "button": "匯出",
-    "title": "匯出所有紀錄為 JSON 檔案"
-  },
-  "import": {
-    "button": "匯入",
-    "title": "從 JSON 檔案匯入紀錄",
-    "dialogTitle": "選擇匯入方式",
-    "dialogMessage": "檔案包含 {{count}} 筆紀錄。\n\n• 合併：保留您現有的紀錄，並新增匯入的資料\n• 取代：清除所有現有紀錄，改用匯入的資料",
-    "mergeButton": "合併 (保留現有+新增)",
-    "replaceButton": "取代 (清空後匯入)",
-    "confirmReplaceTitle": "⚠️ 確認取代",
-    "confirmReplaceMessage": "這將會刪除您所有現有的紀錄，並以匯入的資料取代。此操作無法復原，確定嗎？",
-    "confirmReplaceButton": "確定取代"
-  },
-  "banner": {
-    "openSource": "開源",
-    "donate": "贊助",
-    "privacy": "隱私",
-    "openSourceTitle": "在 GitHub 上查看原始碼",
-    "donateTitle": "請我喝杯咖啡",
-    "privacyTitle": "隱私權政策",
-    "version": "v1.2.0 · Local Only · No Tracking"
-  },
-  "language": {
-    "title": "語言",
-    "zh-Hant": "繁體中文",
-    "zh-Hans": "简体中文",
-    "en": "English",
-    "ja": "日本語",
-    "ko": "한국어"
-  },
-  "dialog": {
-    "confirm": "確認",
-    "cancel": "取消",
-    "deleteTitle": "刪除確認",
-    "deleteMessage": "確定要刪除這個 Session 嗎？此操作無法復原。",
-    "clearAllTitle": "清空全部",
-    "clearAllMessage": "確定要清空所有 {{count}} 個 Session 嗎？此操作無法復原。",
-    "updateTitle": "更新紀錄確認",
-    "updateMessage": "確定要使用目前所有開啟的視窗覆蓋「{{name}}」嗎？原有紀錄將被取代。",
-    "deleteWindowTitle": "刪除視窗確認",
-    "deleteWindowMessage": "確定要刪除這個視窗 ({{count}} 個分頁) 嗎？"
-  },
-  "toast": {
-    "loadFailed": "載入失敗",
-    "saved": "已保存 {{count}} 個分頁",
-    "noTabs": "沒有可保存的分頁",
-    "saveFailed": "保存失敗",
-    "updateFailed": "更新失敗",
-    "deleted": "已刪除",
-    "deleteFailed": "刪除失敗",
-    "clearedAll": "已清空所有紀錄",
-    "clearFailed": "清空失敗",
-    "restored": "已恢復 {{count}} 個分頁",
-    "restoreFailed": "恢復失敗",
-    "openTabFailed": "開啟分頁失敗",
-    "restoreWindowFailed": "恢復視窗失敗",
-    "updated": "已更新紀錄 ({{count}} 個分頁)",
-    "noTabsIncognito": "沒有可保存的分頁 (無痕視窗不會保存)",
-    "recordDeleted": "紀錄已刪除 (無剩餘視窗)",
-    "windowDeleted": "視窗已刪除",
-    "exported": "已匯出紀錄",
-    "exportFailed": "匯出失敗",
-    "invalidJson": "無效的 JSON 格式",
-    "invalidJsonFile": "無效的 JSON 檔案",
-    "noNewRecords": "沒有新增紀錄 (可能已存在相同紀錄)",
-    "imported": "已新增 {{count}} 筆紀錄",
-    "importedReplaced": "已匯入 {{count}} 筆紀錄 (已取代原有資料)",
-    "importFailed": "匯入失敗",
-    "readFileFailed": "讀取檔案失敗"
-  }
+    "app": {
+        "title": "Tab Session Lite",
+        "subtitle": "Instant Save, Local Only"
+    },
+    "header": {
+        "saveButton": "立即保存",
+        "saving": "保存中..."
+    },
+    "sessionList": {
+        "empty": "尚無保存的 Session",
+        "emptyHint": "點擊上方按鈕保存目前的分頁",
+        "clearAll": "清空全部"
+    },
+    "sessionItem": {
+        "window": "視窗",
+        "windows": "個視窗",
+        "tab": "分頁",
+        "tabs": "個分頁",
+        "editNameHint": "點擊編輯名稱",
+        "restoreAll": "全部打開",
+        "updateRecord": "更新紀錄（覆蓋）",
+        "delete": "刪除",
+        "openWindow": "打開此視窗",
+        "deleteWindow": "刪除此視窗",
+        "deleteTab": "刪除此分頁",
+        "tabGroup": "分頁群組"
+    },
+    "export": {
+        "button": "匯出",
+        "title": "匯出所有紀錄為 JSON 檔案"
+    },
+    "import": {
+        "button": "匯入",
+        "title": "從 JSON 檔案匯入紀錄",
+        "dialogTitle": "選擇匯入方式",
+        "dialogMessage": "檔案包含 {{count}} 筆紀錄。\n\n• 合併：保留您現有的紀錄，並新增匯入的資料\n• 取代：清除所有現有紀錄，改用匯入的資料",
+        "mergeButton": "合併 (保留現有+新增)",
+        "replaceButton": "取代 (清空後匯入)",
+        "confirmReplaceTitle": "⚠️ 確認取代",
+        "confirmReplaceMessage": "這將會刪除您所有現有的紀錄，並以匯入的資料取代。此操作無法復原，確定嗎？",
+        "confirmReplaceButton": "確定取代"
+    },
+    "banner": {
+        "openSource": "開源",
+        "donate": "贊助",
+        "privacy": "隱私",
+        "openSourceTitle": "在 GitHub 上查看原始碼",
+        "donateTitle": "請我喝杯咖啡",
+        "privacyTitle": "隱私權政策",
+        "version": "v1.3.0 · Local Only · No Tracking"
+    },
+    "language": {
+        "title": "語言",
+        "zh-Hant": "繁體中文",
+        "zh-Hans": "简体中文",
+        "en": "English",
+        "ja": "日本語",
+        "ko": "한국어"
+    },
+    "dialog": {
+        "confirm": "確認",
+        "cancel": "取消",
+        "deleteTitle": "刪除確認",
+        "deleteMessage": "確定要刪除這個 Session 嗎？此操作無法復原。",
+        "clearAllTitle": "清空全部",
+        "clearAllMessage": "確定要清空所有 {{count}} 個 Session 嗎？此操作無法復原。",
+        "updateTitle": "更新紀錄確認",
+        "updateMessage": "確定要使用目前所有開啟的視窗覆蓋「{{name}}」嗎？原有紀錄將被取代。",
+        "deleteWindowTitle": "刪除視窗確認",
+        "deleteWindowMessage": "確定要刪除這個視窗 ({{count}} 個分頁) 嗎？"
+    },
+    "toast": {
+        "loadFailed": "載入失敗",
+        "saved": "已保存 {{count}} 個分頁",
+        "noTabs": "沒有可保存的分頁",
+        "saveFailed": "保存失敗",
+        "updateFailed": "更新失敗",
+        "deleted": "已刪除",
+        "deleteFailed": "刪除失敗",
+        "clearedAll": "已清空所有紀錄",
+        "clearFailed": "清空失敗",
+        "restored": "已恢復 {{count}} 個分頁",
+        "restoreFailed": "恢復失敗",
+        "openTabFailed": "開啟分頁失敗",
+        "restoreWindowFailed": "恢復視窗失敗",
+        "updated": "已更新紀錄 ({{count}} 個分頁)",
+        "noTabsIncognito": "沒有可保存的分頁 (無痕視窗不會保存)",
+        "recordDeleted": "紀錄已刪除 (無剩餘視窗)",
+        "windowDeleted": "視窗已刪除",
+        "exported": "已匯出紀錄",
+        "exportFailed": "匯出失敗",
+        "invalidJson": "無效的 JSON 格式",
+        "invalidJsonFile": "無效的 JSON 檔案",
+        "noNewRecords": "沒有新增紀錄 (可能已存在相同紀錄)",
+        "imported": "已新增 {{count}} 筆紀錄",
+        "importedReplaced": "已匯入 {{count}} 筆紀錄 (已取代原有資料)",
+        "importFailed": "匯入失敗",
+        "readFileFailed": "讀取檔案失敗"
+    }
 }

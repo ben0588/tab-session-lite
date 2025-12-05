@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Tab Session Lite - タブ管理 & ワンクリック保存",
+        "description": "Extension name for Japanese users"
+    },
+    "extDescription": {
+        "message": "超軽量・高速のタブセッション管理ツール。Instant Save, Local Only.",
+        "description": "Extension description for Japanese users"
+    }
+}
