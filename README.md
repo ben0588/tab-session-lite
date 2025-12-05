@@ -1,4 +1,4 @@
-# Tab Session Lite
+# Tab Session Lite - 分頁管理與一鍵保存
 
 極致輕量、速度優先的 Chrome 分頁 Session 管理擴充功能。
 
