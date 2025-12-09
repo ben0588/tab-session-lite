@@ -520,7 +520,12 @@ export const restoreWindow = async (win, strategy = null) => {
     try {
         if (win.tabs.length === 0) return;
 
-        // 檢查並調整視窗位置
+        // 處理視窗狀態
+        // 注意：fullscreen 和 maximized 不能與 state 參數一起在 create 時使用
+        const windowState = win.state;
+        const isSpecialState = windowState === 'fullscreen' || windowState === 'maximized';
+
+        // 檢查並取得有效的視窗位置
         const validBounds = await getValidWindowBounds(win.left, win.top, win.width, win.height);
 
         // 建立新視窗的選項
@@ -528,20 +533,34 @@ export const restoreWindow = async (win, strategy = null) => {
             url: win.tabs[0].url,
         };
 
-        // 只有在位置有效時才指定位置
+        // 先在正確的螢幕位置建立視窗
         if (validBounds.usePosition) {
             createOptions.left = validBounds.left;
             createOptions.top = validBounds.top;
-            createOptions.width = validBounds.width;
-            createOptions.height = validBounds.height;
+
+            // 如果是特殊狀態（最大化/全螢幕），給一個合理的初始大小
+            // 讓視窗先出現在正確的螢幕上，然後再最大化/全螢幕
+            if (isSpecialState) {
+                createOptions.width = Math.min(800, validBounds.width);
+                createOptions.height = Math.min(600, validBounds.height);
+            } else {
+                createOptions.width = validBounds.width;
+                createOptions.height = validBounds.height;
+            }
         }
 
-        // 如果有保存視窗狀態且不是 minimized，設定狀態
-        if (win.state && win.state !== 'minimized' && win.state !== 'normal') {
-            createOptions.state = win.state;
-        }
-
+        // 建立視窗（先用普通狀態）
         const newWindow = await chrome.windows.create(createOptions);
+
+        // 如果原本是特殊狀態，在建立後立即更新視窗狀態
+        if (isSpecialState && windowState !== 'minimized') {
+            try {
+                await chrome.windows.update(newWindow.id, { state: windowState });
+            } catch (error) {
+                console.warn(`無法設定視窗狀態為 ${windowState}:`, error);
+                // 繼續執行，不中斷恢復流程
+            }
+        }
 
         // 用於追蹤已建立的群組 (groupInfo -> groupId)
         const groupMap = new Map();

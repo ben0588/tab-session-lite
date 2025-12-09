@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.4.1] - 2025-12-09
+
+### 修正 / Bug Fixes
+
+-   **全螢幕/最大化視窗恢復修正** - 修正全螢幕或最大化視窗在雙螢幕環境下無法正確恢復到原螢幕的問題
+-   **Fullscreen/Maximized Window Restore Fix** - Fixed issue where fullscreen or maximized windows couldn't restore to the correct monitor in multi-monitor setup
+    -   現在會先在正確螢幕位置建立視窗，再設定為全螢幕/最大化
+    -   Now creates window at correct monitor position first, then applies fullscreen/maximized state
+
+---
+
 ## [1.4.0] - 2025-12-05
 
 ### 改進 / Improvements
