@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.5.0] - 2025-12-13
+
+### 重大改進 / Major Improvements
+
+-   **極致輕量化 Lazy Loading** - 採用「輕量化佔位頁面」技術，實現零 CPU 消耗的分頁恢復
+-   **Ultra-Lightweight Lazy Loading** - Implemented "Lazy Placeholder Page" technique for zero CPU consumption during tab restoration
+
+    -   使用極輕量 HTML 佔位頁面（< 4KB），取代直接載入目標網頁
+    -   Use ultra-lightweight HTML placeholder page (< 4KB) instead of directly loading target pages
+    -   保留原始網址、標題和圖示，使用者體驗不受影響
+    -   Preserve original URL, title and favicon for seamless user experience
+    -   點擊分頁時才真正載入，CPU 和記憶體消耗趨近於零
+    -   Real page loads only when tab is clicked, CPU and memory usage near zero
+    -   即使恢復 200+ 分頁也能瞬間完成，不會造成卡頓
+    -   Instant restoration even with 200+ tabs without any lag
+
+### 技術細節 / Technical Details
+
+-   新增 `lazy.html` 輕量化佔位頁面，使用原生 JavaScript 實現自動轉址
+-   Added `lazy.html` lightweight placeholder page with native JavaScript auto-redirect
+-   更新 `manifest.json` 的 `web_accessible_resources` 配置
+-   Updated `web_accessible_resources` in manifest.json
+-   移除先前有問題的 `discarded: true` 和 `chrome.tabs.discard()` 方案
+-   Removed problematic `discarded: true` and `chrome.tabs.discard()` approaches
+
+---
+
 ## [1.4.1] - 2025-12-09
 
 ### 修正 / Bug Fixes

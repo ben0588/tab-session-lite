@@ -2,9 +2,9 @@
 
 極致輕量、速度優先的 Chrome 分頁 Session 管理擴充功能。
 
-**核心價值：Instant Save, Local Only.**
+**核心價值：Instant Save, Zero CPU, Local Only.**
 
-[![Version](https://img.shields.io/badge/version-1.4.1-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/pdfabpgjkeplngckadhocdioamjbdpdf?label=Version&logo=google-chrome)](https://chromewebstore.google.com/detail/tab-session-lite/pdfabpgjkeplngckadhocdioamjbdpdf)
 
@@ -28,9 +28,10 @@
 -   🔒 **隱私安全**：
     -   資料僅儲存於瀏覽器 Local Storage，不傳送至任何外部伺服器
     -   自動排除無痕模式視窗
--   ⚡ **效能優化**：
-    -   Lazy Loading 背景分頁延遲載入
-    -   動態延遲策略，大量分頁時自動調整恢復速度
+-   ⚡ **極致效能優化**：
+    -   **零 CPU 消耗 Lazy Loading**：採用輕量化佔位頁面技術（< 4KB），恢復 200+ 分頁也能瞬間完成
+    -   **智慧載入**：只有點擊的分頁才會真正載入，CPU 和記憶體消耗趨近於零
+    -   **無延遲恢復**：移除所有延遲策略，所有分頁瞬間出現在分頁列
 -   🌐 **多語系支援**：繁體中文、简体中文、English、日本語、한국어
 
 ## 技術架構

@@ -364,56 +364,9 @@ export const clearAllSessions = async () => {
  * 延遲函式
  * @param {number} ms - 延遲毫秒數
  */
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 /**
- * 計算 Session 的總分頁數
- * @param {Object} session - Session 物件
- * @returns {number} 總分頁數
- */
-const getTotalTabCount = (session) => {
-    return session.windows.reduce((total, win) => total + win.tabs.length, 0);
-};
-
-/**
- * 根據分頁數量決定延遲策略
- * - 少量 (< 50): 無延遲，維持極速
- * - 中等 (50-100): 輕度延遲
- * - 大量 (> 100): 完整延遲
- * @param {number} totalTabs - 總分頁數
- * @returns {Object} 延遲設定
- */
-const getDelayStrategy = (totalTabs) => {
-    if (totalTabs < 50) {
-        // 少量分頁：極速模式，無延遲
-        return {
-            windowDelay: 0,
-            batchSize: 0, // 0 表示不分批
-            batchDelay: 0,
-            tabDelay: 0,
-        };
-    } else if (totalTabs <= 100) {
-        // 中等分頁：輕度延遲
-        return {
-            windowDelay: 200,
-            batchSize: 10,
-            batchDelay: 80,
-            tabDelay: 0,
-        };
-    } else {
-        // 大量分頁：完整延遲確保穩定
-        return {
-            windowDelay: 500,
-            batchSize: 5,
-            batchDelay: 150,
-            tabDelay: 50,
-        };
-    }
-};
-
-/**
- * 恢復整個 Session（開啟所有視窗與分頁，還原位置和分頁群組）
- * 根據分頁數量動態調整延遲策略
+ * 恢復整個 Session
+ * 使用 Chrome 原生 discarded: true 實現 Lazy Loading
  * @param {Object} session - Session 物件
  * @returns {Promise<{success: number, failed: number}>} 恢復結果統計
  */
@@ -422,23 +375,13 @@ export const restoreSession = async (session) => {
     let failedCount = 0;
 
     try {
-        // 計算總分頁數，決定延遲策略
-        const totalTabs = getTotalTabCount(session);
-        const strategy = getDelayStrategy(totalTabs);
-
-        // 逐一恢復視窗
-        for (let i = 0; i < session.windows.length; i++) {
-            const win = session.windows[i];
+        // 逐一恢復視窗（不需要延遲，因為使用 discarded: true）
+        for (const win of session.windows) {
             try {
-                await restoreWindow(win, strategy);
+                await restoreWindow(win);
                 successCount++;
-
-                // 視窗之間延遲（如果策略需要）
-                if (strategy.windowDelay > 0 && i < session.windows.length - 1) {
-                    await delay(strategy.windowDelay);
-                }
             } catch (error) {
-                console.error(`恢復視窗 ${i + 1} 失敗:`, error);
+                console.error('恢復視窗失敗:', error);
                 failedCount++;
                 // 繼續恢復其他視窗
             }
@@ -508,182 +451,142 @@ const getValidWindowBounds = async (left, top, width, height) => {
 };
 
 /**
- * 恢復單一視窗（開啟該視窗的所有分頁，還原位置和分頁群組）
- * 根據策略決定是否使用延遲
- * @param {Object} win - 視窗物件
- * @param {Object} strategy - 延遲策略（可選，預設為極速模式）
+ * 恢復單一視窗 (修正版)
+ * 解決 Chrome 不支援 create 時直接 discard 的問題
  */
-export const restoreWindow = async (win, strategy = null) => {
-    // 使用傳入的策略，若無則使用極速模式（無延遲）
-    const { batchSize = 0, batchDelay = 0, tabDelay = 0 } = strategy || {};
-
+export const restoreWindow = async (win) => {
     try {
-        if (win.tabs.length === 0) return;
+        if (!win.tabs || win.tabs.length === 0) return;
 
-        // 處理視窗狀態
-        // 注意：fullscreen 和 maximized 不能與 state 參數一起在 create 時使用
-        const windowState = win.state;
-        const isSpecialState = windowState === 'fullscreen' || windowState === 'maximized';
+        // 1. 確保 activeTabIndex 有效
+        let activeTabIndex = win.activeTabIndex;
+        if (activeTabIndex === undefined || activeTabIndex < 0 || activeTabIndex >= win.tabs.length) {
+            const foundIndex = win.tabs.findIndex(t => t.active);
+            activeTabIndex = foundIndex !== -1 ? foundIndex : 0;
+        }
+        const activeTabInfo = win.tabs[activeTabIndex];
 
-        // 檢查並取得有效的視窗位置
+        // 2. 建立視窗 (只載入 Active 分頁)
         const validBounds = await getValidWindowBounds(win.left, win.top, win.width, win.height);
-
-        // 建立新視窗的選項
         const createOptions = {
-            url: win.tabs[0].url,
+            url: activeTabInfo.url, // 這裡只載入原本 active 的那一頁
+            focused: true
         };
 
-        // 先在正確的螢幕位置建立視窗
         if (validBounds.usePosition) {
             createOptions.left = validBounds.left;
             createOptions.top = validBounds.top;
-
-            // 如果是特殊狀態（最大化/全螢幕），給一個合理的初始大小
-            // 讓視窗先出現在正確的螢幕上，然後再最大化/全螢幕
-            if (isSpecialState) {
-                createOptions.width = Math.min(800, validBounds.width);
-                createOptions.height = Math.min(600, validBounds.height);
-            } else {
-                createOptions.width = validBounds.width;
-                createOptions.height = validBounds.height;
-            }
+            createOptions.width = validBounds.width;
+            createOptions.height = validBounds.height;
         }
 
-        // 建立視窗（先用普通狀態）
         const newWindow = await chrome.windows.create(createOptions);
 
-        // 如果原本是特殊狀態，在建立後立即更新視窗狀態
-        if (isSpecialState && windowState !== 'minimized') {
-            try {
-                await chrome.windows.update(newWindow.id, { state: windowState });
-            } catch (error) {
-                console.warn(`無法設定視窗狀態為 ${windowState}:`, error);
-                // 繼續執行，不中斷恢復流程
-            }
+        // 還原視窗狀態
+        if (win.state === 'maximized' || win.state === 'fullscreen') {
+            chrome.windows.update(newWindow.id, { state: win.state }).catch(() => {});
         }
 
-        // 用於追蹤已建立的群組 (groupInfo -> groupId)
+        // 3. 準備群組 Map
         const groupMap = new Map();
-
-        // 處理第一個分頁的群組
-        if (win.tabs[0].groupInfo) {
-            const groupKey = JSON.stringify(win.tabs[0].groupInfo);
+        
+        // 取得新視窗中唯一的那個分頁 (Active 分頁) 的 ID
+        // 注意：chrome.windows.create 剛建立時，tabs 陣列通常只有一個分頁
+        const firstTabId = newWindow.tabs[0].id;
+        
+        // 處理 Active 分頁的群組
+        if (activeTabInfo.groupInfo) {
+            const groupKey = JSON.stringify(activeTabInfo.groupInfo);
             try {
-                const groupId = await chrome.tabs.group({
-                    tabIds: [newWindow.tabs[0].id],
-                    createProperties: { windowId: newWindow.id },
+                const groupId = await chrome.tabs.group({ 
+                    tabIds: [firstTabId], 
+                    createProperties: { windowId: newWindow.id } 
                 });
                 await chrome.tabGroups.update(groupId, {
-                    title: win.tabs[0].groupInfo.title || '',
-                    color: win.tabs[0].groupInfo.color || 'grey',
-                    collapsed: false,
+                    title: activeTabInfo.groupInfo.title,
+                    color: activeTabInfo.groupInfo.color,
+                    collapsed: false 
                 });
                 groupMap.set(groupKey, groupId);
-            } catch (_e) {
-                // 群組建立失敗，忽略
+            } catch (e) {
+                console.error("Active Tab 群組還原失敗", e);
             }
         }
 
-        // 處理剩餘的分頁
-        const remainingTabs = win.tabs.slice(1);
-
-        // 根據策略決定是否分批處理
-        const useBatching = batchSize > 0;
-        const effectiveBatchSize = useBatching ? batchSize : remainingTabs.length;
-
-        for (let batchStart = 0; batchStart < remainingTabs.length; batchStart += effectiveBatchSize) {
-            const batch = remainingTabs.slice(batchStart, batchStart + effectiveBatchSize);
-
-            // 處理這一批分頁
-            for (let j = 0; j < batch.length; j++) {
-                const tab = batch[j];
-                const tabIndex = batchStart + j + 1; // 實際的分頁索引
-
-                try {
-                    // 建立分頁
-                    const newTab = await chrome.tabs.create({
-                        windowId: newWindow.id,
-                        url: tab.url,
-                        index: tabIndex,
-                        active: false,
-                    });
-
-                    // 如果有群組資訊，加入群組
-                    if (tab.groupInfo) {
-                        const groupKey = JSON.stringify(tab.groupInfo);
-
-                        try {
-                            if (groupMap.has(groupKey)) {
-                                await chrome.tabs.group({
-                                    tabIds: [newTab.id],
-                                    groupId: groupMap.get(groupKey),
-                                });
-                            } else {
-                                const groupId = await chrome.tabs.group({
-                                    tabIds: [newTab.id],
-                                    createProperties: { windowId: newWindow.id },
-                                });
-                                await chrome.tabGroups.update(groupId, {
-                                    title: tab.groupInfo.title || '',
-                                    color: tab.groupInfo.color || 'grey',
-                                    collapsed: false,
-                                });
-                                groupMap.set(groupKey, groupId);
-                            }
-                        } catch (_e) {
-                            // 群組操作失敗，忽略
-                        }
-                    }
-
-                    // 單一分頁之間的延遲（僅在策略需要時）
-                    if (tabDelay > 0 && j < batch.length - 1) {
-                        await delay(tabDelay);
-                    }
-                } catch (error) {
-                    console.error(`建立分頁失敗 (index: ${tabIndex}):`, error);
-                    // 單一分頁失敗不影響其他分頁
-                }
-            }
-
-            // 批次之間的延遲（僅在策略需要時）
-            if (useBatching && batchDelay > 0 && batchStart + effectiveBatchSize < remainingTabs.length) {
-                await delay(batchDelay);
-            }
-        }
-
-        // 最後處理群組的收合狀態
+        // 4. 建立剩餘分頁（使用輕量化佔位頁面 Lazy Loading）
         for (let i = 0; i < win.tabs.length; i++) {
-            const tab = win.tabs[i];
-            if (tab.groupInfo && tab.groupInfo.collapsed) {
-                const groupKey = JSON.stringify(tab.groupInfo);
-                const groupId = groupMap.get(groupKey);
-                if (groupId) {
+            // 跳過已經建立的 Active 分頁
+            if (i === activeTabIndex) {
+                continue;
+            }
+
+            const tabInfo = win.tabs[i];
+
+            try {
+                // ✨ 建構佔位 URL - 使用輕量化頁面，CPU 消耗為 0
+                // 注意：要對參數進行 encodeURIComponent 編碼，避免網址格式錯誤
+                const lazyUrl =
+                    chrome.runtime.getURL('lazy.html') +
+                    `?url=${encodeURIComponent(tabInfo.url)}` +
+                    `&title=${encodeURIComponent(tabInfo.title || 'Loading...')}` +
+                    `&favIconUrl=${encodeURIComponent(tabInfo.favIconUrl || '')}`;
+
+                // 🔥 建立分頁（使用佔位頁面，不需要 discard）
+                const newTab = await chrome.tabs.create({
+                    windowId: newWindow.id,
+                    url: lazyUrl, // 使用佔位頁面，幾乎不吃資源
+                    index: i,
+                    active: false, // 背景分頁
+                });
+
+                // 加入群組邏輯
+                if (tabInfo.groupInfo) {
+                    const groupKey = JSON.stringify(tabInfo.groupInfo);
+                    let groupId = groupMap.get(groupKey);
+
                     try {
-                        await chrome.tabGroups.update(groupId, { collapsed: true });
+                        if (!groupId) {
+                            // 建立新群組
+                            groupId = await chrome.tabs.group({
+                                tabIds: [newTab.id],
+                                createProperties: { windowId: newWindow.id },
+                            });
+                            await chrome.tabGroups.update(groupId, {
+                                title: tabInfo.groupInfo.title || '',
+                                color: tabInfo.groupInfo.color || 'grey',
+                                collapsed: false,
+                            });
+                            groupMap.set(groupKey, groupId);
+                        } else {
+                            // 加入現有群組
+                            await chrome.tabs.group({
+                                tabIds: [newTab.id],
+                                groupId: groupId,
+                            });
+                        }
                     } catch (_e) {
-                        // 忽略
+                        // 群組操作失敗，忽略
                     }
                 }
+            } catch (error) {
+                console.error(`建立分頁失敗 (index: ${i}):`, error);
+                // 單一分頁失敗不影響其他分頁
             }
         }
 
-        // 恢復聚焦分頁：切換到保存時的活動分頁
-        if (win.activeTabIndex !== undefined && win.activeTabIndex >= 0) {
-            try {
-                const windowTabs = await chrome.tabs.query({ windowId: newWindow.id });
-                if (windowTabs.length > win.activeTabIndex) {
-                    await chrome.tabs.update(windowTabs[win.activeTabIndex].id, { active: true });
-                }
-            } catch (_e) {
-                // 聚焦失敗，忽略
+        // 5. 最後處理群組收合
+        for (const [key, groupId] of groupMap) {
+            const info = JSON.parse(key);
+            if (info.collapsed) {
+                chrome.tabGroups.update(groupId, { collapsed: true }).catch(() => {});
             }
         }
+
     } catch (error) {
         console.error('恢復視窗失敗:', error);
         throw error;
     }
 };
-
 /**
  * 開啟單一分頁
  * @param {string} url - 分頁 URL
