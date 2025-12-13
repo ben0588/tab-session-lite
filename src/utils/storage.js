@@ -34,6 +34,41 @@ const isValidUrl = (url) => {
 };
 
 /**
+ * 解析分頁資訊
+ * 如果是 Lazy Loading 的佔位頁面，則還原其真實的 URL 和標題
+ * @param {Object} tab - Chrome Tab 物件
+ * @returns {Object} 解析後的 Tab 物件
+ */
+const resolveRealTabInfo = (tab) => {
+    // 偵測是否為我們的 Lazy 佔位頁面
+    // 檢查 url 是否存在且包含 lazy.html (避免誤判其他 extension 頁面)
+    if (tab.url && tab.url.includes('/lazy.html?')) {
+        try {
+            const urlObj = new URL(tab.url);
+            const realUrl = urlObj.searchParams.get('url');
+            const realTitle = urlObj.searchParams.get('title');
+            const realFavIcon = urlObj.searchParams.get('favIconUrl');
+
+            if (realUrl) {
+                // 回傳一個新的物件，將 URL 替換回真實網址
+                return {
+                    ...tab,
+                    url: decodeURIComponent(realUrl), // 解碼 URL
+                    // 如果有保存標題就用保存的，否則用目前的（目前的可能是 "Loading..."）
+                    title: realTitle ? decodeURIComponent(realTitle) : tab.title,
+                    // 還原圖示
+                    favIconUrl: realFavIcon ? decodeURIComponent(realFavIcon) : tab.favIconUrl
+                };
+            }
+        } catch (e) {
+            console.warn('解析 Lazy URL 失敗:', e);
+        }
+    }
+    // 如果不是 Lazy 頁面，或是解析失敗，就原樣回傳
+    return tab;
+};
+
+/**
  * 取得所有 Sessions
  * @returns {Promise<Array>} Sessions 陣列
  */
@@ -90,13 +125,17 @@ export const saveSession = async () => {
 
         // 處理每個視窗（排除無痕模式）
         for (const win of normalWindows) {
-            // 過濾掉無法開啟的特殊頁面
-            const validTabs = win.tabs.filter((tab) => isValidUrl(tab.url));
+            // ✨ 先解析 Lazy 分頁，還原成真實網址
+            const resolvedTabs = win.tabs.map(resolveRealTabInfo);
+
+            // 然後再進行有效性過濾（這時候 chrome-extension:// 已經變成真實網址了）
+            const validTabs = resolvedTabs.filter((tab) => isValidUrl(tab.url));
 
             // 找出原本的聚焦分頁在過濾後的索引
             let activeTabIndex = 0;
             const originalActiveTab = win.tabs.find((tab) => tab.active);
-            if (originalActiveTab && isValidUrl(originalActiveTab.url)) {
+            if (originalActiveTab) {
+                // 使用 ID 來比對，因為 resolveRealTabInfo 不會改變 tab.id
                 const activeIndex = validTabs.findIndex((tab) => tab.id === originalActiveTab.id);
                 if (activeIndex !== -1) {
                     activeTabIndex = activeIndex;
@@ -235,12 +274,17 @@ export const overwriteSession = async (sessionId, sessionName) => {
 
         // 處理每個視窗
         for (const win of normalWindows) {
-            const validTabs = win.tabs.filter((tab) => isValidUrl(tab.url));
+            // ✨ 先解析 Lazy 分頁，還原成真實網址
+            const resolvedTabs = win.tabs.map(resolveRealTabInfo);
+
+            // 然後再進行有效性過濾
+            const validTabs = resolvedTabs.filter((tab) => isValidUrl(tab.url));
 
             // 找出原本的聚焦分頁在過濾後的索引
             let activeTabIndex = 0;
             const originalActiveTab = win.tabs.find((tab) => tab.active);
-            if (originalActiveTab && isValidUrl(originalActiveTab.url)) {
+            if (originalActiveTab) {
+                // 使用 ID 來比對
                 const activeIndex = validTabs.findIndex((tab) => tab.id === originalActiveTab.id);
                 if (activeIndex !== -1) {
                     activeTabIndex = activeIndex;

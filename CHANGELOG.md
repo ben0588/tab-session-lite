@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.5.1] - 2025-12-14
+
+### 修正 / Bug Fixes
+
+-   **Lazy 分頁保存修正** - 修正未點開的 lazy 分頁在再次保存時會遺失的問題
+-   **Lazy Page Save Fix** - Fixed issue where unclicked lazy tabs would be lost when saving again
+
+    -   新增 `resolveRealTabInfo()` 函數，自動解析 lazy 佔位頁面的真實 URL
+    -   Added `resolveRealTabInfo()` function to automatically parse real URL from lazy placeholder pages
+    -   更新 `saveSession()` 和 `overwriteSession()` 函數，在保存前先解析 lazy 分頁
+    -   Updated `saveSession()` and `overwriteSession()` to resolve lazy tabs before saving
+    -   優化 lazy.html 載入邏輯，避免分頁被意外轉址
+    -   Optimized lazy.html loading logic to prevent accidental redirects
+
+---
+
 ## [1.5.0] - 2025-12-13
 
 ### 重大改進 / Major Improvements

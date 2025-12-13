@@ -51,11 +51,12 @@ const loadRealPage = () => {
 };
 
 // 6. 監聽事件
-// 當頁面被「聚焦 (Focus)」或「點擊」時，才載入
-window.addEventListener('focus', loadRealPage);
+// 當頁面被「點擊」或「真正聚焦」時，才載入
 window.addEventListener('click', loadRealPage);
 
-// 雙重保險：如果一打開就是 Active 狀態 (document.hidden 為 false)，直接載入
-if (!document.hidden) {
-    loadRealPage();
-}
+// 監聽 visibilitychange：當分頁從背景切換到前景時載入
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        loadRealPage();
+    }
+});
