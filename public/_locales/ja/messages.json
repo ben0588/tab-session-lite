@@ -1,10 +1,10 @@
 {
     "extName": {
         "message": "Tab Session Lite - タブ管理 & ワンクリック保存",
-        "description": "Extension name for Japanese users"
+        "description": "Extension name"
     },
     "extDescription": {
-        "message": "超軽量・高速のタブセッション管理ツール。Instant Save, Local Only.",
-        "description": "Extension description for Japanese users"
+        "message": "PCが重くならない！「Zero CPU」技術で、数百個のタブも一瞬で復元。完全ローカル・超軽量のタブ管理ツール。Instant Save, Zero CPU, Local Only.",
+        "description": "Extension description"
     }
 }

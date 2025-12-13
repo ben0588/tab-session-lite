@@ -1,10 +1,10 @@
 {
     "extName": {
         "message": "Tab Session Lite - Instant Tab Manager",
-        "description": "Extension name for English users"
+        "description": "Extension name"
     },
     "extDescription": {
-        "message": "Lightweight, speed-first tab session manager. Instant Save, Local Only.",
-        "description": "Extension description for English users"
+        "message": "Say goodbye to lag! Restore hundreds of tabs instantly with Zero CPU usage. The ultimate lightweight manager. Instant Save, Zero CPU, Local Only.",
+        "description": "Extension description"
     }
 }

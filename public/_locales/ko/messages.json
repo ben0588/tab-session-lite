@@ -1,10 +1,10 @@
 {
     "extName": {
         "message": "Tab Session Lite - 탭 관리 및 원클릭 저장",
-        "description": "Extension name for Korean users"
+        "description": "Extension name"
     },
     "extDescription": {
-        "message": "초경량, 속도 우선 탭 세션 관리 도구. Instant Save, Local Only.",
-        "description": "Extension description for Korean users"
+        "message": "렉 없는 쾌적함! Zero CPU 기술로 수백 개의 탭도 순식간에 복구합니다. 가장 빠르고 가벼운 탭 관리 도구. Instant Save, Zero CPU, Local Only.",
+        "description": "Extension description"
     }
 }
