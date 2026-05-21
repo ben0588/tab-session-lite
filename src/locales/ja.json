@@ -10,7 +10,12 @@
     "sessionList": {
         "empty": "保存されたセッションがありません",
         "emptyHint": "上のボタンをクリックして現在のタブを保存",
-        "clearAll": "すべてクリア"
+        "clearAll": "すべてクリア",
+        "recentlyDeleted": "最近の削除",
+        "recentlyDeletedTitle": "最近削除した記録（{{count}} 件）",
+        "recentlyDeletedHint": "最近削除した 7 件の記録が自動保持されます。超えると自動的に上書きされます。",
+        "recentlyDeletedEmpty": "最近削除した記録はありません",
+        "backToList": "リストに戻る"
     },
     "sessionItem": {
         "window": "ウィンドウ",
@@ -24,7 +29,8 @@
         "openWindow": "このウィンドウを開く",
         "deleteWindow": "このウィンドウを削除",
         "deleteTab": "このタブを削除",
-        "tabGroup": "タブグループ"
+        "tabGroup": "タブグループ",
+        "restoreRecord": "復元"
     },
     "export": {
         "button": "エクスポート",
@@ -48,7 +54,7 @@
         "openSourceTitle": "GitHubでソースコードを見る",
         "donateTitle": "コーヒーをおごる",
         "privacyTitle": "プライバシーポリシー",
-        "version": "v1.5.1 · ローカル保存 · トラッキングなし"
+        "version": "v1.5.2 · ローカル保存 · トラッキングなし"
     },
     "language": {
         "title": "言語",
@@ -61,10 +67,11 @@
     "dialog": {
         "confirm": "確認",
         "cancel": "キャンセル",
-        "deleteTitle": "削除の確認",
-        "deleteMessage": "このセッションを削除してもよろしいですか？この操作は元に戻せません。",
-        "clearAllTitle": "すべてクリア",
-        "clearAllMessage": "{{count}} 件のセッションをすべてクリアしてもよろしいですか？この操作は元に戻せません。",
+        "moveToTrash": "ゴミ筒に移動",
+        "deleteTitle": "この記録を削除？",
+        "deleteMessage": "この記録は「最近削除」に保持され、7件を超えた後に自動上書きされます。",
+        "clearAllTitle": "すべての記録を削除？",
+        "clearAllMessage": "{{count}}件の記録が「最近削除」に保持され、7件を超えた後に自動上書きされます。",
         "updateTitle": "更新の確認",
         "updateMessage": "現在開いているすべてのウィンドウで「{{name}}」を上書きしてもよろしいですか？元の記録は置き換えられます。",
         "deleteWindowTitle": "ウィンドウ削除の確認",
@@ -96,6 +103,8 @@
         "imported": "{{count}} 件の記録を追加しました",
         "importedReplaced": "{{count}} 件の記録をインポートしました（既存を置換）",
         "importFailed": "インポートに失敗しました",
-        "readFileFailed": "ファイルの読み取りに失敗しました"
+        "readFileFailed": "ファイルの読み取りに失敗しました",
+        "restoredFromDeleted": "記録を復元しました",
+        "restoreFromDeletedFailed": "復元に失敗しました"
     }
 }

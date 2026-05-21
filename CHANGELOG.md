@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.5.2] - 2026-05-21
+
+### 新增 / New Features
+
+-   **最近刪除** - 新增「最近刪除」功能，提供刪除紀錄的安全緩衝
+-   **Recently Deleted** - Added "Recently Deleted" feature as a safety buffer for deleted sessions
+
+    -   刪除單筆或清空全部時，自動將紀錄移至「最近刪除」保留
+    -   Deleted sessions (single or clear all) are automatically moved to "Recently Deleted"
+    -   最多保留最近 7 筆刪除紀錄，超過自動覆蓋最舊的
+    -   Keeps up to 7 most recent deleted records, oldest auto-overwritten when exceeded
+    -   支援一鍵還原，將紀錄移回主列表最上方
+    -   One-click restore to bring records back to the top of the main list
+    -   「最近刪除」以灰色卡片樣式呈現，視覺上與正常紀錄有所區分
+    -   Recently deleted items displayed with gray card style, visually distinct from normal records
+
+### 改進 / Improvements
+
+-   **對話框文案更新** - 刪除確認對話框新增說明文字，讓使用者了解刪除後紀錄的去向
+-   **Dialog Text Update** - Delete confirmation dialogs now explain where deleted records go
+
+    -   單筆刪除按鈕改為「移至垃圾桶」
+    -   Single delete button changed to "Move to Trash"
+    -   對話框說明紀錄將移至「最近刪除」保留
+    -   Dialog explains records will be kept in "Recently Deleted"
+
+-   **匯出/匯入按鈕重新命名** - 更名為「匯出備份」/「匯入備份」，語意更清晰
+-   **Export/Import Button Rename** - Renamed to "Export Backup" / "Import Backup" for clarity
+
+-   **立即保存自動切換視圖** - 在「最近刪除」頁面按下「立即保存」時，自動切回主列表
+-   **Save Auto-switches View** - Clicking "Save Now" while in "Recently Deleted" view automatically returns to main list
+
+---
+
 ## [1.5.1] - 2025-12-14
 
 ### 修正 / Bug Fixes

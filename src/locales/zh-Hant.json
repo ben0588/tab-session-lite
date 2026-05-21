@@ -10,7 +10,12 @@
     "sessionList": {
         "empty": "尚無保存的 Session",
         "emptyHint": "點擊上方按鈕保存目前的分頁",
-        "clearAll": "清空全部"
+        "clearAll": "清空全部",
+        "recentlyDeleted": "最近刪除",
+        "recentlyDeletedTitle": "最近刪除紀錄（共 {{count}} 筆）",
+        "recentlyDeletedHint": "系統將自動保留最近 7 筆刪除紀錄，超過將自動覆蓋。",
+        "recentlyDeletedEmpty": "沒有最近刪除的紀錄",
+        "backToList": "返回清單"
     },
     "sessionItem": {
         "window": "視窗",
@@ -24,14 +29,15 @@
         "openWindow": "打開此視窗",
         "deleteWindow": "刪除此視窗",
         "deleteTab": "刪除此分頁",
-        "tabGroup": "分頁群組"
+        "tabGroup": "分頁群組",
+        "restoreRecord": "還原"
     },
     "export": {
-        "button": "匯出",
+        "button": "匯出備份",
         "title": "匯出所有紀錄為 JSON 檔案"
     },
     "import": {
-        "button": "匯入",
+        "button": "匯入備份",
         "title": "從 JSON 檔案匯入紀錄",
         "dialogTitle": "選擇匯入方式",
         "dialogMessage": "檔案包含 {{count}} 筆紀錄。\n\n• 合併：保留您現有的紀錄，並新增匯入的資料\n• 取代：清除所有現有紀錄，改用匯入的資料",
@@ -48,7 +54,7 @@
         "openSourceTitle": "在 GitHub 上查看原始碼",
         "donateTitle": "請我喝杯咖啡",
         "privacyTitle": "隱私權政策",
-        "version": "v1.5.1 · Local Only · No Tracking"
+        "version": "v1.5.2 · Local Only · No Tracking"
     },
     "language": {
         "title": "語言",
@@ -61,10 +67,11 @@
     "dialog": {
         "confirm": "確認",
         "cancel": "取消",
-        "deleteTitle": "刪除確認",
-        "deleteMessage": "確定要刪除這個 Session 嗎？此操作無法復原。",
-        "clearAllTitle": "清空全部",
-        "clearAllMessage": "確定要清空所有 {{count}} 個 Session 嗎？此操作無法復原。",
+        "moveToTrash": "移至垃圾桶",
+        "deleteTitle": "刪除此紀錄？",
+        "deleteMessage": "此紀錄將移至「最近刪除」保留，超過 7 筆後才會被自動覆蓋。",
+        "clearAllTitle": "刪除全部紀錄？",
+        "clearAllMessage": "共 {{count}} 筆紀錄將移至「最近刪除」保留，超過 7 筆後才會被自動覆蓋。",
         "updateTitle": "更新紀錄確認",
         "updateMessage": "確定要使用目前所有開啟的視窗覆蓋「{{name}}」嗎？原有紀錄將被取代。",
         "deleteWindowTitle": "刪除視窗確認",
@@ -96,6 +103,8 @@
         "imported": "已新增 {{count}} 筆紀錄",
         "importedReplaced": "已匯入 {{count}} 筆紀錄 (已取代原有資料)",
         "importFailed": "匯入失敗",
-        "readFileFailed": "讀取檔案失敗"
+        "readFileFailed": "讀取檔案失敗",
+        "restoredFromDeleted": "已還原紀錄",
+        "restoreFromDeletedFailed": "還原失敗"
     }
 }

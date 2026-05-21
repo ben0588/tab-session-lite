@@ -10,7 +10,12 @@
     "sessionList": {
         "empty": "No saved sessions",
         "emptyHint": "Click the button above to save current tabs",
-        "clearAll": "Clear All"
+        "clearAll": "Clear All",
+        "recentlyDeleted": "Recently Deleted",
+        "recentlyDeletedTitle": "Recently Deleted ({{count}} items)",
+        "recentlyDeletedHint": "Up to 7 recently deleted records are kept. Older ones are automatically removed.",
+        "recentlyDeletedEmpty": "No recently deleted records",
+        "backToList": "Back to list"
     },
     "sessionItem": {
         "window": "Window",
@@ -24,14 +29,15 @@
         "openWindow": "Open this window",
         "deleteWindow": "Delete this window",
         "deleteTab": "Delete this tab",
-        "tabGroup": "Tab Group"
+        "tabGroup": "Tab Group",
+        "restoreRecord": "Restore"
     },
     "export": {
-        "button": "Export",
+        "button": "Export Backup",
         "title": "Export all records as JSON file"
     },
     "import": {
-        "button": "Import",
+        "button": "Import Backup",
         "title": "Import records from JSON file",
         "dialogTitle": "Choose Import Method",
         "dialogMessage": "File contains {{count}} records.\n\n• Merge: Keep existing records and add imported data\n• Replace: Clear all existing records and use imported data",
@@ -48,7 +54,7 @@
         "openSourceTitle": "View source code on GitHub",
         "donateTitle": "Buy me a coffee",
         "privacyTitle": "Privacy Policy",
-        "version": "v1.5.1 · Local Only · No Tracking"
+        "version": "v1.5.2 · Local Only · No Tracking"
     },
     "language": {
         "title": "Language",
@@ -61,10 +67,11 @@
     "dialog": {
         "confirm": "Confirm",
         "cancel": "Cancel",
-        "deleteTitle": "Confirm Delete",
-        "deleteMessage": "Are you sure you want to delete this session? This action cannot be undone.",
-        "clearAllTitle": "Clear All",
-        "clearAllMessage": "Are you sure you want to clear all {{count}} sessions? This action cannot be undone.",
+        "moveToTrash": "Move to Trash",
+        "deleteTitle": "Delete this record?",
+        "deleteMessage": "This record will be moved to \"Recently Deleted\" and kept until 7 records are exceeded, then it will be automatically overwritten.",
+        "clearAllTitle": "Delete all records?",
+        "clearAllMessage": "All {{count}} records will be moved to \"Recently Deleted\" and kept until 7 records are exceeded, then older ones will be automatically overwritten.",
         "updateTitle": "Confirm Update",
         "updateMessage": "Are you sure you want to overwrite \"{{name}}\" with all currently open windows? The original record will be replaced.",
         "deleteWindowTitle": "Confirm Delete Window",
@@ -96,6 +103,8 @@
         "imported": "Added {{count}} records",
         "importedReplaced": "Imported {{count}} records (replaced existing)",
         "importFailed": "Failed to import",
-        "readFileFailed": "Failed to read file"
+        "readFileFailed": "Failed to read file",
+        "restoredFromDeleted": "Record restored",
+        "restoreFromDeletedFailed": "Failed to restore"
     }
 }

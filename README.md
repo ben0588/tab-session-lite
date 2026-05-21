@@ -4,7 +4,7 @@
 
 **核心價值：Instant Save, Zero CPU, Local Only.**
 
-[![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.2-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/pdfabpgjkeplngckadhocdioamjbdpdf?label=Version&logo=google-chrome)](https://chromewebstore.google.com/detail/tab-session-lite/pdfabpgjkeplngckadhocdioamjbdpdf)
 
@@ -60,11 +60,22 @@ npm run icons
 
 ## 安裝擴充功能
 
-1. 執行 `npm run build` 建構專案
+1. 執行以下指令建構專案（若看不到新功能，先清除快取再重建）：
+   ```bash
+   # 一般建構
+   npm run build
+
+   # 清除快取後重建（CMD）
+   rmdir /s /q dist && npm run build
+
+   # 清除快取後重建（PowerShell）
+   Remove-Item dist -Recurse -Force ; npm run build
+   ```
 2. 開啟 Chrome，進入 `chrome://extensions/`
 3. 開啟右上角「開發人員模式」
 4. 點擊「載入未封裝項目」
 5. 選擇專案的 `dist` 資料夾
+6. 若已載入過，點擊擴充功能卡片上的「重新載入」按鈕
 
 ## 使用方式
 

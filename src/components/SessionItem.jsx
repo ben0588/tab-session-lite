@@ -20,6 +20,8 @@ const GROUP_COLORS = {
  */
 export default function SessionItem({ 
   session, 
+  isDeleted = false,
+  onRestoreFromDeleted,
   onRestore, 
   onDelete, 
   onOpenTab,
@@ -67,16 +69,16 @@ export default function SessionItem({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div className={`border rounded-lg overflow-hidden ${isDeleted ? 'bg-gray-50 border-gray-200' : 'bg-white border-gray-200 shadow-sm'}`}>
       {/* Session 標題列 */}
       <div 
-        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+        className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${isDeleted ? 'hover:bg-gray-100' : 'hover:bg-gray-50'}`}
         onClick={() => !isEditing && setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {/* 展開/收合圖示 */}
           <svg 
-            className={`w-4 h-4 text-gray-500 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`}
+            className={`w-4 h-4 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''} ${isDeleted ? 'text-gray-300' : 'text-gray-500'}`}
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -98,17 +100,18 @@ export default function SessionItem({
               />
             ) : (
               <div 
-                className="text-sm font-medium text-gray-900 truncate cursor-text hover:text-blue-600"
+                className={`text-sm font-medium truncate ${isDeleted ? 'text-gray-400 cursor-default' : 'text-gray-900 cursor-text hover:text-blue-600'}`}
                 onClick={(e) => {
+                  if (isDeleted) return;
                   e.stopPropagation();
                   setIsEditing(true);
                 }}
-                title={t('sessionItem.editNameHint')}
+                title={isDeleted ? undefined : t('sessionItem.editNameHint')}
               >
                 {session.name || `Session ${formatDateTime(session.createdAt)}`}
               </div>
             )}
-            <div className="text-xs text-gray-400 mt-0.5 space-y-0.5">
+            <div className={`text-xs mt-0.5 space-y-0.5 ${isDeleted ? 'text-gray-300' : 'text-gray-400'}`}>
               <div>{formatDateTime(session.createdAt)}</div>
               <div>{session.windows.length} {t('sessionItem.windows')} · {session.totalTabs} {t('sessionItem.tabs')}</div>
             </div>
@@ -117,38 +120,54 @@ export default function SessionItem({
 
         {/* 操作按鈕 */}
         <div className="flex items-center gap-1 ml-2" onClick={(e) => e.stopPropagation()}>
-          {/* 全部恢復按鈕 - 使用外連箭頭圖示 */}
-          <button
-            onClick={() => onRestore(session)}
-            className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
-            title={t('sessionItem.restoreAll')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </button>
+          {isDeleted ? (
+            /* 已刪除模式：只顯示還原按鈕 */
+            <button
+              onClick={() => onRestoreFromDeleted(session)}
+              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors flex items-center gap-1"
+              title={t('sessionItem.restoreRecord')}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              <span className="text-xs">{t('sessionItem.restoreRecord')}</span>
+            </button>
+          ) : (
+            <>
+              {/* 全部恢復按鈕 - 使用外連箭頭圖示 */}
+              <button
+                onClick={() => onRestore(session)}
+                className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                title={t('sessionItem.restoreAll')}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </button>
 
-          {/* 更新紀錄按鈕 */}
-          <button
-            onClick={() => onOverwrite(session)}
-            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-            title={t('sessionItem.updateRecord')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-          </button>
+              {/* 更新紀錄按鈕 */}
+              <button
+                onClick={() => onOverwrite(session)}
+                className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                title={t('sessionItem.updateRecord')}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
 
-          {/* 刪除按鈕 */}
-          <button
-            onClick={() => onDelete(session.id)}
-            className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-            title={t('sessionItem.delete')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+              {/* 刪除按鈕 */}
+              <button
+                onClick={() => onDelete(session.id)}
+                className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                title={t('sessionItem.delete')}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -166,26 +185,30 @@ export default function SessionItem({
                       ({win.left}, {win.top})
                     </span>
                   )}
-                  {/* 單獨打開此視窗按鈕 - 視窗彈出圖示 */}
-                  <button
-                    onClick={() => onRestoreWindow(win)}
-                    className="p-1 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
-                    title={t('sessionItem.openWindow')}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0v12m0-12l-8 8M4 4v5h.582m.418 9h10a2 2 0 002-2V8" />
-                    </svg>
-                  </button>
-                  {/* 刪除此視窗按鈕 */}
-                  <button
-                    onClick={() => onDeleteWindow(session.id, winIndex)}
-                    className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                    title={t('sessionItem.deleteWindow')}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                  {!isDeleted && (
+                    <>
+                      {/* 單獨打開此視窗按鈕 - 視窗彈出圖示 */}
+                      <button
+                        onClick={() => onRestoreWindow(win)}
+                        className="p-1 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                        title={t('sessionItem.openWindow')}
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0v12m0-12l-8 8M4 4v5h.582m.418 9h10a2 2 0 002-2V8" />
+                        </svg>
+                      </button>
+                      {/* 刪除此視窗按鈕 */}
+                      <button
+                        onClick={() => onDeleteWindow(session.id, winIndex)}
+                        className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title={t('sessionItem.deleteWindow')}
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
               
@@ -236,15 +259,17 @@ export default function SessionItem({
                     )}
                     
                     {/* 刪除分頁按鈕 */}
-                    <button
-                      onClick={() => handleDeleteTab(winIndex, tab.id)}
-                      className="p-0.5 rounded hover:bg-red-100 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
-                      title={t('sessionItem.deleteTab')}
-                    >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                    {!isDeleted && (
+                      <button
+                        onClick={() => handleDeleteTab(winIndex, tab.id)}
+                        className="p-0.5 rounded hover:bg-red-100 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
+                        title={t('sessionItem.deleteTab')}
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

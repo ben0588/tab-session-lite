@@ -10,7 +10,12 @@
     "sessionList": {
         "empty": "暂无保存的 Session",
         "emptyHint": "点击上方按钮保存当前的标签页",
-        "clearAll": "清空全部"
+        "clearAll": "清空全部",
+        "recentlyDeleted": "最近删除",
+        "recentlyDeletedTitle": "最近删除记录（共 {{count}} 条）",
+        "recentlyDeletedHint": "系统将自动保留最近 7 条删除记录，超过将自动覆盖。",
+        "recentlyDeletedEmpty": "没有最近删除的记录",
+        "backToList": "返回列表"
     },
     "sessionItem": {
         "window": "窗口",
@@ -24,14 +29,15 @@
         "openWindow": "打开此窗口",
         "deleteWindow": "删除此窗口",
         "deleteTab": "删除此标签页",
-        "tabGroup": "标签页分组"
+        "tabGroup": "标签页分组",
+        "restoreRecord": "还原"
     },
     "export": {
-        "button": "导出",
+        "button": "导出备份",
         "title": "导出所有记录为 JSON 文件"
     },
     "import": {
-        "button": "导入",
+        "button": "导入备份",
         "title": "从 JSON 文件导入记录",
         "dialogTitle": "选择导入方式",
         "dialogMessage": "文件包含 {{count}} 条记录。\n\n• 合并：保留您现有的记录，并新增导入的数据\n• 替换：清除所有现有记录，改用导入的数据",
@@ -48,7 +54,7 @@
         "openSourceTitle": "在 GitHub 上查看源代码",
         "donateTitle": "请我喝杯咖啡",
         "privacyTitle": "隐私政策",
-        "version": "v1.5.1 · 本地存储 · 无追踪"
+        "version": "v1.5.2 · 本地存储 · 无追踪"
     },
     "language": {
         "title": "语言",
@@ -61,10 +67,11 @@
     "dialog": {
         "confirm": "确认",
         "cancel": "取消",
-        "deleteTitle": "删除确认",
-        "deleteMessage": "确定要删除这个 Session 吗？此操作无法撤销。",
-        "clearAllTitle": "清空全部",
-        "clearAllMessage": "确定要清空所有 {{count}} 个 Session 吗？此操作无法撤销。",
+        "moveToTrash": "移至垃圾桶",
+        "deleteTitle": "删除此记录？",
+        "deleteMessage": "此记录将移至「最近删除」保留，超过 7 条后才会被自动覆盖。",
+        "clearAllTitle": "删除全部记录？",
+        "clearAllMessage": "共 {{count}} 条记录将移至「最近删除」保留，超过 7 条后才会被自动覆盖。",
         "updateTitle": "更新记录确认",
         "updateMessage": "确定要使用当前所有打开的窗口覆盖「{{name}}」吗？原有记录将被替换。",
         "deleteWindowTitle": "删除窗口确认",
@@ -96,6 +103,8 @@
         "imported": "已新增 {{count}} 条记录",
         "importedReplaced": "已导入 {{count}} 条记录 (已替换原有数据)",
         "importFailed": "导入失败",
-        "readFileFailed": "读取文件失败"
+        "readFileFailed": "读取文件失败",
+        "restoredFromDeleted": "已还原记录",
+        "restoreFromDeletedFailed": "还原失败"
     }
 }

@@ -5,6 +5,8 @@
 
 // 儲存鍵名
 const STORAGE_KEY = 'sessions';
+const DELETED_STORAGE_KEY = 'deletedSessions';
+const MAX_DELETED_SESSIONS = 7;
 
 /**
  * 檢查 URL 是否可以被擴充功能開啟
@@ -79,6 +81,61 @@ export const loadSessions = async () => {
     } catch (error) {
         console.error('載入 Sessions 失敗:', error);
         return [];
+    }
+};
+
+/**
+ * 取得最近刪除的 Sessions
+ * @returns {Promise<Array>} 最近刪除的 Sessions 陣列
+ */
+export const loadDeletedSessions = async () => {
+    try {
+        const result = await chrome.storage.local.get(DELETED_STORAGE_KEY);
+        return result[DELETED_STORAGE_KEY] || [];
+    } catch (error) {
+        console.error('載入已刪除 Sessions 失敗:', error);
+        return [];
+    }
+};
+
+/**
+ * 將 Session 加入最近刪除清單（最多保留 MAX_DELETED_SESSIONS 筆）
+ * @param {Object} session - 要加入已刪除清單的 Session 物件
+ */
+const addToDeletedSessions = async (session) => {
+    try {
+        const deleted = await loadDeletedSessions();
+        const updated = [session, ...deleted].slice(0, MAX_DELETED_SESSIONS);
+        await chrome.storage.local.set({ [DELETED_STORAGE_KEY]: updated });
+    } catch (error) {
+        console.error('加入已刪除 Sessions 失敗:', error);
+    }
+};
+
+/**
+ * 從最近刪除清單中還原 Session 至主清單
+ * @param {string} sessionId - Session ID
+ * @returns {Promise<Object|false>} 還原的 Session 物件，失敗則回傳 false
+ */
+export const restoreFromDeletedSession = async (sessionId) => {
+    try {
+        const deleted = await loadDeletedSessions();
+        const sessionToRestore = deleted.find((s) => s.id === sessionId);
+        if (!sessionToRestore) return false;
+
+        // 從已刪除清單移除
+        const updatedDeleted = deleted.filter((s) => s.id !== sessionId);
+        await chrome.storage.local.set({ [DELETED_STORAGE_KEY]: updatedDeleted });
+
+        // 加回主清單（置頂）
+        const sessions = await loadSessions();
+        const updatedSessions = [sessionToRestore, ...sessions];
+        await chrome.storage.local.set({ [STORAGE_KEY]: updatedSessions });
+
+        return sessionToRestore;
+    } catch (error) {
+        console.error('還原已刪除 Session 失敗:', error);
+        return false;
     }
 };
 
@@ -214,13 +271,17 @@ export const updateSession = async (updatedSession) => {
 };
 
 /**
- * 刪除單一 Session
+ * 刪除單一 Session（自動加入最近刪除清單）
  * @param {string} sessionId - Session ID
  * @returns {Promise<boolean>} 是否成功
  */
 export const deleteSession = async (sessionId) => {
     try {
         const sessions = await loadSessions();
+        const sessionToDelete = sessions.find((s) => s.id === sessionId);
+        if (sessionToDelete) {
+            await addToDeletedSessions(sessionToDelete);
+        }
         const updatedSessions = sessions.filter((s) => s.id !== sessionId);
         await chrome.storage.local.set({ [STORAGE_KEY]: updatedSessions });
         return true;
@@ -391,11 +452,18 @@ export const importSessions = async (jsonString, overwrite = false) => {
 };
 
 /**
- * 清空所有 Sessions
+ * 清空所有 Sessions（自動將現有紀錄加入最近刪除清單）
  * @returns {Promise<boolean>} 是否成功
  */
 export const clearAllSessions = async () => {
     try {
+        const sessions = await loadSessions();
+        // 將現有 sessions 依序加入已刪除清單（保留最新 MAX_DELETED_SESSIONS 筆）
+        if (sessions.length > 0) {
+            const existingDeleted = await loadDeletedSessions();
+            const combined = [...sessions, ...existingDeleted].slice(0, MAX_DELETED_SESSIONS);
+            await chrome.storage.local.set({ [DELETED_STORAGE_KEY]: combined });
+        }
         await chrome.storage.local.set({ [STORAGE_KEY]: [] });
         return true;
     } catch (error) {
