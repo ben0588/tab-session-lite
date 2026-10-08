@@ -72,7 +72,7 @@ export default function SessionItem({
   };
 
   return (
-    <div className="bg-white dark:bg-surface-card border border-gray-200/90 dark:border-hairline hover:border-gray-300 dark:hover:border-hairline-strong rounded-lg shadow-sm overflow-hidden transition-all duration-150">
+    <div className={`border rounded-lg overflow-hidden transition-all duration-150 ${isDeleted ? 'bg-gray-50/70 dark:bg-surface/50 border-gray-200/70 dark:border-hairline/60' : 'bg-white dark:bg-surface-card border-gray-200/90 dark:border-hairline hover:border-gray-300 dark:hover:border-hairline-strong shadow-sm'}`}>
       {/* Session 標題列 */}
       <div 
         className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50/80 dark:hover:bg-surface-elevated/50 transition-colors"
@@ -103,7 +103,7 @@ export default function SessionItem({
               />
             ) : (
               <div 
-                className="text-sm font-medium text-gray-900 dark:text-ink truncate cursor-text hover:text-blue-600 dark:hover:text-white transition-colors"
+                className={`text-sm font-medium truncate ${isDeleted ? 'text-gray-500 dark:text-mute cursor-default' : 'text-gray-900 dark:text-ink cursor-text hover:text-blue-600 dark:hover:text-white transition-colors'}`}
                 onClick={(e) => {
                   if (isDeleted) return;
                   e.stopPropagation();
@@ -128,39 +128,55 @@ export default function SessionItem({
         </div>
 
         {/* 操作按鈕 */}
-        <div className="flex items-center gap-0.5 ml-2" onClick={(e) => e.stopPropagation()}>
-          {/* 全部恢復按鈕 */}
-          <button
-            onClick={() => onRestore(session)}
-            className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 dark:text-mute dark:hover:text-accent-green dark:hover:bg-accent-green/10 rounded-md transition-colors"
-            title={t('sessionItem.restoreAll')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </button>
+        <div className="flex items-center gap-1 ml-2" onClick={(e) => e.stopPropagation()}>
+          {isDeleted ? (
+            /* 已刪除模式：僅顯示還原按鈕 */
+            <button
+              onClick={() => onRestoreFromDeleted(session)}
+              className="px-2.5 py-1 text-xs font-medium text-blue-600 dark:text-accent-blue bg-blue-50 hover:bg-blue-100 dark:bg-accent-blue/10 dark:hover:bg-accent-blue/20 rounded-md transition-colors flex items-center gap-1.5 shadow-sm"
+              title={t('sessionItem.restoreRecord')}
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              <span>{t('sessionItem.restoreRecord')}</span>
+            </button>
+          ) : (
+            <>
+              {/* 全部恢復按鈕 */}
+              <button
+                onClick={() => onRestore(session)}
+                className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 dark:text-mute dark:hover:text-accent-green dark:hover:bg-accent-green/10 rounded-md transition-colors"
+                title={t('sessionItem.restoreAll')}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </button>
 
-          {/* 更新紀錄按鈕 */}
-          <button
-            onClick={() => onOverwrite(session)}
-            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:text-mute dark:hover:text-accent-blue dark:hover:bg-accent-blue/10 rounded-md transition-colors"
-            title={t('sessionItem.updateRecord')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-          </button>
+              {/* 更新紀錄按鈕 */}
+              <button
+                onClick={() => onOverwrite(session)}
+                className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:text-mute dark:hover:text-accent-blue dark:hover:bg-accent-blue/10 rounded-md transition-colors"
+                title={t('sessionItem.updateRecord')}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
 
-          {/* 刪除按鈕 */}
-          <button
-            onClick={() => onDelete(session.id)}
-            className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-mute dark:hover:text-accent-red dark:hover:bg-accent-red/10 rounded-md transition-colors"
-            title={t('sessionItem.delete')}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+              {/* 刪除按鈕 */}
+              <button
+                onClick={() => onDelete(session.id)}
+                className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-mute dark:hover:text-accent-red dark:hover:bg-accent-red/10 rounded-md transition-colors"
+                title={t('sessionItem.delete')}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -188,16 +204,18 @@ export default function SessionItem({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0v12m0-12l-8 8M4 4v5h.582m.418 9h10a2 2 0 002-2V8" />
                     </svg>
                   </button>
-                  {/* 刪除此視窗按鈕 */}
-                  <button
-                    onClick={() => onDeleteWindow(session.id, winIndex)}
-                    className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-mute dark:hover:text-accent-red dark:hover:bg-accent-red/10 rounded transition-colors"
-                    title={t('sessionItem.deleteWindow')}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                  {/* 刪除此視窗按鈕（僅一般模式顯示） */}
+                  {!isDeleted && (
+                    <button
+                      onClick={() => onDeleteWindow(session.id, winIndex)}
+                      className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:text-mute dark:hover:text-accent-red dark:hover:bg-accent-red/10 rounded transition-colors"
+                      title={t('sessionItem.deleteWindow')}
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
               
@@ -247,16 +265,18 @@ export default function SessionItem({
                       </span>
                     )}
                     
-                    {/* 刪除分頁按鈕 */}
-                    <button
-                      onClick={() => handleDeleteTab(winIndex, tab.id)}
-                      className="p-0.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 dark:text-ash dark:hover:text-accent-red dark:hover:bg-accent-red/10 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
-                      title={t('sessionItem.deleteTab')}
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                    {/* 刪除分頁按鈕（僅一般模式顯示） */}
+                    {!isDeleted && (
+                      <button
+                        onClick={() => handleDeleteTab(winIndex, tab.id)}
+                        className="p-0.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 dark:text-ash dark:hover:text-accent-red dark:hover:bg-accent-red/10 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+                        title={t('sessionItem.deleteTab')}
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

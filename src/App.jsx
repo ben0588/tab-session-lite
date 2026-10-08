@@ -18,6 +18,8 @@ import {
   importSessions,
   formatDateTime,
   getSessionDisplayName,
+  loadDeletedSessions,
+  restoreFromDeletedSession,
   getTheme,
   saveTheme,
 } from './utils/storage';

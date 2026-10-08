@@ -37,8 +37,13 @@ All notable changes to this project will be documented in this file.
     -   Refactored Toast into a sleek capsule HUD (`top-7`) with unified 330px width, removing redundant close button and layout jitter.
     -   顯示時長語意分級：一般操作縮短至 `1.8s`，錯誤提示維持 `3s`，搭配防抖定時器清理，節奏更俐落且杜絕連點競態關閉 bug。
     -   Tiered toast display duration (1.8s for success/info, 3s for error) with timer debounce cleanup for snappier feedback.
-    -   移除單側粗邊框，改為四周均衡 1px hairline 細框，狀態識別由柔和微光 Icon（綠/紅/藍）承載，閱讀體驗更自然舒適。
-    -   Replaced aggressive left border with uniform 1px hairline and soft accent-glow icons, ensuring optimal visual balance.
+-   **最近刪除安全緩衝與彈窗多語系修復 / Recently Deleted Buffer & Dialog i18n Fix** -
+    -   修復清空彈窗未配置多語系鍵值導致顯示 `dialog.moveToTrash` 的問題，完整補齊 5 國語言鍵值。
+    -   Fixed missing translation keys causing raw `dialog.moveToTrash` in clear-all confirmation dialog across all 5 languages.
+    -   清空或刪除時將紀錄移至「最近刪除」（最多保留 7 筆，先進先出），消除「無法復原」之語意矛盾。
+    -   Records moved to Recently Deleted (up to 7 items buffer, FIFO) on delete or clear-all, removing contradictory "cannot be undone" prompts.
+    -   列表工具列整合「最近刪除」檢視切換與一鍵還原回主清單。
+    -   Integrated Recently Deleted view toggle with badge count and one-click restore functionality in SessionList.
 
 ---
 
