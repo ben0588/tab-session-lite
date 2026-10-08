@@ -2,21 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 自訂滾動條樣式 */
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 400px;
+    height: 520px;
+    overflow: hidden;
+    background-color: #f3f4f6;
+    color: #111827;
+    font-feature-settings: "calt", "kern", "liga", "ss03";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html.dark, html.dark body {
+    background-color: #07080a;
+    color: #f4f4f6;
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: inherit;
+  }
+}
+
+/* 亮色微型捲軸 */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #94a3b8;
+}
+
+/* 暗色微型捲軸 */
+.dark ::-webkit-scrollbar-thumb {
+  background: #242728;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #434345;
 }

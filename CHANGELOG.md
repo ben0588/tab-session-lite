@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.6.0] - 2026-10-08
+
+### 重大改進與新功能 / Major Improvements & Features
+
+-   **雙主題切換系統 / Dual Theme System** - 支援經典亮色與 Raycast 極黑暗黑主題切換，搭配 1px hairline 細緻邊框與純黑畫布。
+    -   Support seamless switching between Classic Light and Raycast-style Dark themes with hairline borders.
+-   **全語系說明文件擴充 / Documentation i18n** - 補齊 5 國語言 README（繁體中文、English、日本語、한국어、简体中文）與頂部快速切換列。
+    -   Added comprehensive README documentation in 5 languages with quick language-switch headers.
+
+### 介面與體驗優化 / UI & UX Polish
+
+-   **主操作區聚焦 / Primary CTA Polish** - Header「立即保存」按鈕高度微增至 36px，手感更立體明確，次要設定按鈕移出 Header。
+    -   Optimized "Save Now" button height to 36px for better click target, removing non-essential controls from Header.
+-   **資訊欄群組化防折行 / Metadata Grouping & No-Wrap** - 視窗與分頁數量群組化並加上不換行保護，徹底解決小寬度下「個分頁」單獨折行斷裂的問題。
+    -   Grouped window and tab counters with `whitespace-nowrap inline-flex` to prevent unwanted line breaks.
+-   **在地化親和性文案 / Localized & Friendly Wording** - 副標題在地化（「即時保存 · 本地儲存」），清單標頭與卡片預設名稱去除生硬的「Session」技術專有名詞。
+    -   Localized subtitle ("Instant Save, Local Only") and softened technical jargon across all 5 languages.
+-   **純黑白極簡單行 Footer / Monochrome Minimalist Footer** -
+    -   將深淺主題開關移至語言切換右側，整合全域偏好設定。
+    -   Moved theme toggle next to language selector in Footer for unified preference management.
+    -   所有圖示全面採純黑白單色 SVG（移除彩色 Emoji 與彩色 hover 樣式）。
+    -   Adopted pure monochrome SVG icons for all action buttons (removed colored emojis and hover states).
+    -   移除第二行冗餘文字，將版本號整合為低調單行灰標，釋放約 20px 歷史列表垂直高度。
+    -   Condensed footer to a compact single-line layout, saving ~20px of vertical space for the session list.
+-   **對話框動態名稱與語意統一 / Dialog Semantic Alignment & Dynamic Name** -
+    -   刪除確認對話框動態帶入目標紀錄名稱（「確定要刪除『{{name}}』嗎？」），清單清空對話框全面替換為「紀錄」詞彙。
+    -   Dynamic target record name in delete confirmation dialog, replacing technical "Session" terms with friendly "record" across all 5 languages.
+-   **頂部 Raycast 膠囊 HUD 與對稱 1px Hairline / Top Capsule HUD & 1px Hairline** -
+    -   Toast 改為頂部 `top-7` 浮動膠囊 HUD，統一採用 `330px` 固定工整寬度，消除寬度伸縮跳動與眼球漂移問題。
+    -   Refactored Toast into a sleek capsule HUD (`top-7`) with unified 330px width, removing redundant close button and layout jitter.
+    -   顯示時長語意分級：一般操作縮短至 `1.8s`，錯誤提示維持 `3s`，搭配防抖定時器清理，節奏更俐落且杜絕連點競態關閉 bug。
+    -   Tiered toast display duration (1.8s for success/info, 3s for error) with timer debounce cleanup for snappier feedback.
+    -   移除單側粗邊框，改為四周均衡 1px hairline 細框，狀態識別由柔和微光 Icon（綠/紅/藍）承載，閱讀體驗更自然舒適。
+    -   Replaced aggressive left border with uniform 1px hairline and soft accent-glow icons, ensuring optimal visual balance.
+
+---
+
 ## [1.5.1] - 2025-12-14
 
 ### 修正 / Bug Fixes

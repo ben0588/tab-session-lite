@@ -1,18 +1,20 @@
 {
     "app": {
         "title": "Tab Session Lite",
-        "subtitle": "即時保存、ローカル保存"
+        "subtitle": "即時保存 · ローカル保存"
     },
     "header": {
         "saveButton": "今すぐ保存",
         "saving": "保存中..."
     },
     "sessionList": {
-        "empty": "保存されたセッションがありません",
+        "title": "保存履歴",
+        "empty": "保存された記録はありません",
         "emptyHint": "上のボタンをクリックして現在のタブを保存",
         "clearAll": "すべてクリア"
     },
     "sessionItem": {
+        "recordPrefix": "記録",
         "window": "ウィンドウ",
         "windows": "ウィンドウ",
         "tab": "タブ",
@@ -44,11 +46,12 @@
     "banner": {
         "openSource": "GitHub",
         "donate": "寄付",
-        "privacy": "隱私",
+        "privacy": "プライバシー",
         "openSourceTitle": "GitHubでソースコードを見る",
         "donateTitle": "コーヒーをおごる",
         "privacyTitle": "プライバシーポリシー",
-        "version": "v1.5.1 · ローカル保存 · トラッキングなし"
+        "themeLight": "ライトモードに切り替え",
+        "themeDark": "ダークモードに切り替え"
     },
     "language": {
         "title": "言語",
@@ -62,9 +65,9 @@
         "confirm": "確認",
         "cancel": "キャンセル",
         "deleteTitle": "削除の確認",
-        "deleteMessage": "このセッションを削除してもよろしいですか？この操作は元に戻せません。",
+        "deleteMessage": "「{{name}}」を削除してもよろしいですか？この操作は元に戻せません。",
         "clearAllTitle": "すべてクリア",
-        "clearAllMessage": "{{count}} 件のセッションをすべてクリアしてもよろしいですか？この操作は元に戻せません。",
+        "clearAllMessage": "{{count}} 件の記録をすべてクリアしてもよろしいですか？この操作は元に戻せません。",
         "updateTitle": "更新の確認",
         "updateMessage": "現在開いているすべてのウィンドウで「{{name}}」を上書きしてもよろしいですか？元の記録は置き換えられます。",
         "deleteWindowTitle": "ウィンドウ削除の確認",
@@ -96,6 +99,7 @@
         "imported": "{{count}} 件の記録を追加しました",
         "importedReplaced": "{{count}} 件の記録をインポートしました（既存を置換）",
         "importFailed": "インポートに失敗しました",
-        "readFileFailed": "ファイルの読み取りに失敗しました"
+        "readFileFailed": "ファイルの読み取りに失敗しました",
+        "sponsorThanks": "ご支援ありがとうございます！気に入っていただけましたら、Chrome ウェブストアでレビューをお願いします ⭐"
     }
 }

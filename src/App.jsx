@@ -17,6 +17,9 @@ import {
   exportSessions,
   importSessions,
   formatDateTime,
+  getSessionDisplayName,
+  getTheme,
+  saveTheme,
 } from './utils/storage';
 
 function App() {
@@ -26,6 +29,41 @@ function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false });
+  const [theme, setTheme] = useState('light');
+  const toastTimerRef = useRef(null);
+
+  // 元件卸載時清理 Toast 計時器
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  // 初始化載入主題
+  useEffect(() => {
+    getTheme().then((savedTheme) => {
+      setTheme(savedTheme);
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    });
+  }, []);
+
+  // 切換主題
+  const handleToggleTheme = async () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    if (nextTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    await saveTheme(nextTheme);
+  };
 
   // 載入 Sessions
   const fetchSessions = useCallback(async () => {
@@ -43,11 +81,18 @@ function App() {
     fetchSessions();
   }, [fetchSessions]);
 
-  // 顯示 Toast
-  const showToast = (message, type = 'success') => {
+  // 顯示 Toast (語意分級時間：一般 1.8 秒，錯誤 3 秒；定時器防抖清理)
+  const showToast = useCallback((message, type = 'success') => {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+    const duration = type === 'error' ? 3000 : 1800;
+    toastTimerRef.current = setTimeout(() => {
+      setToast(null);
+      toastTimerRef.current = null;
+    }, duration);
+  }, []);
 
   // 保存 Session
   const handleSave = async () => {
@@ -89,10 +134,13 @@ function App() {
 
   // 刪除 Session
   const handleDelete = async (sessionId) => {
+    const targetSession = sessions.find((s) => s.id === sessionId);
+    const displayName = getSessionDisplayName(targetSession, t('sessionItem.recordPrefix', '紀錄'));
+
     setConfirmDialog({
       isOpen: true,
       title: t('dialog.deleteTitle'),
-      message: t('dialog.deleteMessage'),
+      message: t('dialog.deleteMessage', { name: displayName }),
       onConfirm: async () => {
         const success = await deleteSession(sessionId);
         if (success) {
@@ -160,10 +208,12 @@ function App() {
 
   // 覆蓋更新 Session (用目前分頁覆蓋現有紀錄)
   const handleOverwrite = (session) => {
+    const displayName = getSessionDisplayName(session, t('sessionItem.recordPrefix', '紀錄'));
+
     setConfirmDialog({
       isOpen: true,
       title: t('dialog.updateTitle'),
-      message: t('dialog.updateMessage', { name: session.name }),
+      message: t('dialog.updateMessage', { name: displayName }),
       onConfirm: async () => {
         try {
           const updatedSession = await overwriteSession(session.id, session.name);
@@ -335,57 +385,61 @@ function App() {
   };
 
   return (
-    <div className="w-[400px] h-[500px] bg-gray-100 flex flex-col">
+    <div className="w-full h-full bg-gray-100 dark:bg-canvas text-gray-900 dark:text-ink flex flex-col font-sans select-none overflow-hidden transition-colors">
       {/* Header */}
-      <header className="bg-white shadow-sm px-4 py-3 flex-shrink-0">
+      <header className="bg-white dark:bg-surface/90 shadow-sm border-b border-gray-100 dark:border-hairline px-4 py-3 flex-shrink-0 transition-colors">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <div className="flex items-center gap-2.5">
+            {/* 經典藍紫漸層 Logo */}
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-sm flex-shrink-0">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
             </div>
             <div>
-              <h1 className="text-sm font-bold text-gray-900">{t('app.title')}</h1>
-              <p className="text-xs text-gray-500">{t('app.subtitle')}</p>
+              <h1 className="text-sm font-bold text-gray-900 dark:text-ink tracking-tight">{t('app.title')}</h1>
+              <p className="text-xs text-gray-500 dark:text-mute">{t('app.subtitle')}</p>
             </div>
           </div>
           
-          {/* 保存按鈕 */}
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all
-              ${isSaving 
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg active:scale-95'
-              }`}
-          >
-            {isSaving ? (
-              <>
-                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {t('header.saving')}
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                </svg>
-                {t('header.saveButton')}
-              </>
-            )}
-          </button>
+          {/* 右側操作按鈕區 (唯一 Primary CTA: 立即保存按鈕) */}
+          <div className="flex items-center">
+            {/* 保存按鈕 - 經典藍紫高對比漸層按鈕 */}
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-medium text-xs transition-all shadow-sm
+                ${isSaving 
+                  ? 'bg-gray-300 dark:bg-stone text-gray-500 dark:text-ash cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow hover:shadow-md active:scale-95'
+                }`}
+            >
+              {isSaving ? (
+                <>
+                  <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('header.saving')}
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                  </svg>
+                  {t('header.saveButton')}
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
       {/* 主要內容區 */}
-      <main className="flex-1 overflow-y-auto p-3">
+      <main className="flex-1 overflow-y-auto p-3 bg-gray-100 dark:bg-canvas transition-colors">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <svg className="animate-spin w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin w-6 h-6 text-blue-500 dark:text-mute" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -406,13 +460,13 @@ function App() {
       </main>
 
       {/* Banner 區塊 */}
-      <footer className="flex-shrink-0 px-3 pb-3">
+      <footer className="flex-shrink-0 px-3 pb-2.5 bg-gray-100 dark:bg-canvas transition-colors">
         {/* 匯出/匯入按鈕 */}
         <div className="flex gap-2 mb-2">
           <button
             onClick={handleExport}
             disabled={sessions.length === 0}
-            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-mute hover:text-gray-900 dark:hover:text-ink bg-white dark:bg-surface-card hover:bg-gray-50 dark:hover:bg-surface-elevated border border-gray-300 dark:border-hairline rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             title={t('export.title')}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -422,7 +476,7 @@ function App() {
           </button>
           <button
             onClick={handleImportClick}
-            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-mute hover:text-gray-900 dark:hover:text-ink bg-white dark:bg-surface-card hover:bg-gray-50 dark:hover:bg-surface-elevated border border-gray-300 dark:border-hairline rounded-lg transition-all shadow-sm"
             title={t('import.title')}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -439,7 +493,7 @@ function App() {
             className="hidden"
           />
         </div>
-        <Banner />
+        <Banner onShowToast={showToast} theme={theme} onToggleTheme={handleToggleTheme} />
       </footer>
 
       {/* Toast 通知 */}

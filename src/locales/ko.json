@@ -1,18 +1,20 @@
 {
     "app": {
         "title": "Tab Session Lite",
-        "subtitle": "즉시 저장, 로컬 전용"
+        "subtitle": "즉시 저장 · 로컬 전용"
     },
     "header": {
         "saveButton": "지금 저장",
         "saving": "저장 중..."
     },
     "sessionList": {
-        "empty": "저장된 세션이 없습니다",
+        "title": "저장된 기록",
+        "empty": "저장된 기록이 없습니다",
         "emptyHint": "위의 버튼을 클릭하여 현재 탭 저장",
         "clearAll": "모두 지우기"
     },
     "sessionItem": {
+        "recordPrefix": "기록",
         "window": "창",
         "windows": "창",
         "tab": "탭",
@@ -48,7 +50,8 @@
         "openSourceTitle": "GitHub에서 소스 코드 보기",
         "donateTitle": "커피 한 잔 사주기",
         "privacyTitle": "개인정보 처리방침",
-        "version": "v1.5.1 · 로컬 전용 · 추적 없음"
+        "themeLight": "라이트 모드로 전환",
+        "themeDark": "다크 모드로 전환"
     },
     "language": {
         "title": "언어",
@@ -62,9 +65,9 @@
         "confirm": "확인",
         "cancel": "취소",
         "deleteTitle": "삭제 확인",
-        "deleteMessage": "이 세션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+        "deleteMessage": "'{{name}}'을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
         "clearAllTitle": "모두 지우기",
-        "clearAllMessage": "{{count}}개의 세션을 모두 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+        "clearAllMessage": "{{count}}개의 기록을 모두 지우시겠습니까? 이 작업은 되돌릴 수 없습니다.",
         "updateTitle": "업데이트 확인",
         "updateMessage": "현재 열린 모든 창으로 \"{{name}}\"을(를) 덮어쓰시겠습니까? 기존 기록이 대체됩니다.",
         "deleteWindowTitle": "창 삭제 확인",
@@ -96,6 +99,7 @@
         "imported": "{{count}}개 기록 추가됨",
         "importedReplaced": "{{count}}개 기록 가져옴 (기존 대체됨)",
         "importFailed": "가져오기 실패",
-        "readFileFailed": "파일 읽기 실패"
+        "readFileFailed": "파일 읽기 실패",
+        "sponsorThanks": "응원해 주셔서 감사합니다! 유용하셨다면 Chrome 웹스토어에 별점 리뷰를 남겨주세요 ⭐"
     }
 }

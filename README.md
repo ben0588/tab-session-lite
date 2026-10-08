@@ -1,10 +1,14 @@
+<p align="right">
+  <strong>繁體中文</strong> | <a href="./README.en.md">English</a> | <a href="./README.ja.md">日本語</a> | <a href="./README.ko.md">한국어</a> | <a href="./README.zh-Hans.md">简体中文</a>
+</p>
+
 # Tab Session Lite - 分頁管理與一鍵保存
 
 極致輕量、速度優先的 Chrome 分頁 Session 管理擴充功能。
 
 **核心價值：Instant Save, Zero CPU, Local Only.**
 
-[![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/pdfabpgjkeplngckadhocdioamjbdpdf?label=Version&logo=google-chrome)](https://chromewebstore.google.com/detail/tab-session-lite/pdfabpgjkeplngckadhocdioamjbdpdf)
 

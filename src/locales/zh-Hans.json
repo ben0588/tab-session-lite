@@ -1,22 +1,24 @@
 {
     "app": {
         "title": "Tab Session Lite",
-        "subtitle": "即时保存，本地存储"
+        "subtitle": "即时保存 · 本地存储"
     },
     "header": {
         "saveButton": "立即保存",
         "saving": "保存中..."
     },
     "sessionList": {
-        "empty": "暂无保存的 Session",
+        "title": "保存记录",
+        "empty": "暂无保存的记录",
         "emptyHint": "点击上方按钮保存当前的标签页",
         "clearAll": "清空全部"
     },
     "sessionItem": {
+        "recordPrefix": "记录",
         "window": "窗口",
-        "windows": "个窗口",
+        "windows": "窗口",
         "tab": "标签页",
-        "tabs": "个标签页",
+        "tabs": "标签页",
         "editNameHint": "点击编辑名称",
         "restoreAll": "全部打开",
         "updateRecord": "更新记录（覆盖）",
@@ -48,7 +50,8 @@
         "openSourceTitle": "在 GitHub 上查看源代码",
         "donateTitle": "请我喝杯咖啡",
         "privacyTitle": "隐私政策",
-        "version": "v1.5.1 · 本地存储 · 无追踪"
+        "themeLight": "切换为亮色模式",
+        "themeDark": "切换为深色模式"
     },
     "language": {
         "title": "语言",
@@ -62,9 +65,9 @@
         "confirm": "确认",
         "cancel": "取消",
         "deleteTitle": "删除确认",
-        "deleteMessage": "确定要删除这个 Session 吗？此操作无法撤销。",
+        "deleteMessage": "确定要删除「{{name}}」吗？此操作无法撤销。",
         "clearAllTitle": "清空全部",
-        "clearAllMessage": "确定要清空所有 {{count}} 个 Session 吗？此操作无法撤销。",
+        "clearAllMessage": "确定要清空全部 {{count}} 条记录吗？此操作无法撤销。",
         "updateTitle": "更新记录确认",
         "updateMessage": "确定要使用当前所有打开的窗口覆盖「{{name}}」吗？原有记录将被替换。",
         "deleteWindowTitle": "删除窗口确认",
@@ -96,6 +99,7 @@
         "imported": "已新增 {{count}} 条记录",
         "importedReplaced": "已导入 {{count}} 条记录 (已替换原有数据)",
         "importFailed": "导入失败",
-        "readFileFailed": "读取文件失败"
+        "readFileFailed": "读取文件失败",
+        "sponsorThanks": "感谢您的支持！若觉得好用，欢迎到 Chrome 商店留下好评 ⭐"
     }
 }

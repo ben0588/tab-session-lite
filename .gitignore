@@ -25,3 +25,6 @@ dist-ssr
 
 
 .copilot-instructions.md
+.agents
+AGENTS.md
+docs
