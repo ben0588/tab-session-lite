@@ -41,9 +41,12 @@ All notable changes to this project will be documented in this file.
     -   修復清空彈窗未配置多語系鍵值導致顯示 `dialog.moveToTrash` 的問題，完整補齊 5 國語言鍵值。
     -   Fixed missing translation keys causing raw `dialog.moveToTrash` in clear-all confirmation dialog across all 5 languages.
     -   清空或刪除時將紀錄移至「最近刪除」（最多保留 7 筆，先進先出），消除「無法復原」之語意矛盾。
-    -   Records moved to Recently Deleted (up to 7 items buffer, FIFO) on delete or clear-all, removing contradictory "cannot be undone" prompts.
-    -   列表工具列整合「最近刪除」檢視切換與一鍵還原回主清單。
     -   Integrated Recently Deleted view toggle with badge count and one-click restore functionality in SessionList.
+-   **商店上架指南與文件無 Emoji 極客重構 / Store Listing Guide & Clean Markdown Polish** -
+    -   建立 [`docs/STORE_LISTING.md`](./docs/STORE_LISTING.md) 文件，收錄繁中、英文、日文、韓文、簡中 5 國語言商店上架材料（45 字元標題、132 字元短描述、詳細說明與 SEO 標籤）。
+    -   Added comprehensive multi-language store listing guide (`docs/STORE_LISTING.md`) covering 5 languages for Chrome Web Store submission.
+    -   全面清理所有 README 的彩色 Emoji，升級為符合 Raycast 美學之極簡、工整的文字結構排版。
+    -   Refactored all 5 README files to a clean, non-emoji developer aesthetic aligned with Raycast styling.
 
 ---
 

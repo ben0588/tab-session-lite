@@ -14,29 +14,32 @@ Ultra-lightweight, performance-first Chrome extension for managing tab sessions.
 
 ## Features
 
-- 🚀 **Instant Save**: Capture all tabs across all open windows in a single click.
-- 📋 **Session History**: View saved sessions organized chronologically.
-- 🔄 **Flexible Restore**:
+- **Instant Save**: Capture all tabs and groups across all open windows in milliseconds.
+- **Zero-CPU Lazy Loading Architecture**:
+  - Ultra-lightweight placeholder technology (< 4KB) prevents CPU/memory spikes even when restoring 200+ tabs.
+  - Tabs load real content only when clicked/activated, saving memory and eliminating browser freezes.
+  - Zero recovery latency: Tabs appear instantly in your tab bar.
+- **Full Geometry & Group Restoration**:
+  - Window Placement: Automatically restores original window dimensions, coordinates, and displays.
+  - Tab Groups: Preserves native Chrome Tab Groups (names, colors, and order).
+- **Flexible Restore Options**:
   - Restore All: One-click restoration of all windows and tabs.
   - Single Window Restore: Restore only a specific window and its tabs.
   - Single Tab Launch: Open individual pages directly from the list.
-- 📍 **Full Geometry & Group Restoration**:
-  - Window Placement: Automatically restores original window dimensions and coordinates.
-  - Tab Groups: Preserves tab group names, colors, and order.
-- ✏️ **Custom Management**:
-  - Rename sessions for quick identification.
-  - Overwrite sessions: Update an existing record with current active tabs.
-  - Granular deletion: Delete individual tabs, specific windows, or entire sessions.
-  - Clear all records when needed.
-- 📦 **Export / Import**: JSON-based backup and cross-device migration.
-- 🔒 **Privacy & Security**:
-  - Stored strictly in local browser storage (`chrome.storage.local`), never sent to external servers.
-  - Automatically excludes Incognito windows.
-- ⚡ **Zero-CPU Lazy Loading Architecture**:
-  - Ultra-lightweight placeholder technology (< 4KB) prevents CPU/memory spikes even when restoring 200+ tabs.
-  - Tabs load real content only when clicked/activated.
-  - Zero recovery latency: Tabs appear instantly in your tab bar.
-- 🌐 **Multi-language Support**: Traditional Chinese, English, Japanese, Korean, and Simplified Chinese.
+- **Recently Deleted Buffer**:
+  - Built-in trash bin keeps your last 7 deleted records automatically (FIFO).
+  - Eliminates fear of accidental deletions with one-click restore.
+- **Dual Theme System**:
+  - Classic Clean Light mode for everyday simplicity.
+  - Raycast-inspired developer Dark mode with hairline borders and pure-black canvas.
+- **Local-Only Privacy**:
+  - 100% stored in local browser storage (`chrome.storage.local`), never sent to external servers.
+  - Automatically excludes Incognito windows to protect private browsing.
+- **Offline Data Management**:
+  - In-place renaming and one-click overwrite with currently active tabs.
+  - Standard JSON import/export (supports merge and replace modes) for easy backups.
+- **Full Multi-language Support**:
+  - English, Traditional Chinese, Japanese, Korean, and Simplified Chinese.
 
 ## Tech Stack
 
