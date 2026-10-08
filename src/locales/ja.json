@@ -11,7 +11,12 @@
         "title": "保存履歴",
         "empty": "保存された記録はありません",
         "emptyHint": "上のボタンをクリックして現在のタブを保存",
-        "clearAll": "すべてクリア"
+        "clearAll": "すべてクリア",
+        "recentlyDeleted": "最近の削除",
+        "recentlyDeletedTitle": "最近削除した記録（{{count}} 件）",
+        "recentlyDeletedHint": "最近削除した 7 件の記録が自動保持されます。超えると自動的に上書きされます。",
+        "recentlyDeletedEmpty": "最近削除した記録はありません",
+        "backToList": "リストに戻る"
     },
     "sessionItem": {
         "recordPrefix": "記録",
@@ -26,7 +31,8 @@
         "openWindow": "このウィンドウを開く",
         "deleteWindow": "このウィンドウを削除",
         "deleteTab": "このタブを削除",
-        "tabGroup": "タブグループ"
+        "tabGroup": "タブグループ",
+        "restoreRecord": "復元"
     },
     "export": {
         "button": "エクスポート",

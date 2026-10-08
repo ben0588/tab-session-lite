@@ -5,7 +5,10 @@ import SessionItem from './SessionItem';
  * SessionList 元件 - 顯示 Session 列表 (支援雙主題)
  */
 export default function SessionList({ 
-  sessions, 
+  sessions,
+  deletedSessions = [],
+  showDeleted = false,
+  onToggleDeleted,
   onRestore, 
   onDelete, 
   onOpenTab,
@@ -13,11 +16,12 @@ export default function SessionList({
   onUpdateSession,
   onOverwrite,
   onDeleteWindow,
-  onClearAll 
+  onClearAll,
+  onRestoreFromDeleted,
 }) {
   const { t } = useTranslation();
 
-  if (sessions.length === 0) {
+  if (!showDeleted && sessions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 px-4 rounded-xl border border-dashed border-gray-300 dark:border-hairline bg-white/70 dark:bg-surface/50 my-auto shadow-sm">
         <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-surface-card border border-gray-200 dark:border-hairline flex items-center justify-center mb-3 text-gray-400 dark:text-ash">

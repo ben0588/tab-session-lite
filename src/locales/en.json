@@ -11,7 +11,12 @@
         "title": "Sessions",
         "empty": "No saved sessions",
         "emptyHint": "Click the button above to save current tabs",
-        "clearAll": "Clear All"
+        "clearAll": "Clear All",
+        "recentlyDeleted": "Recently Deleted",
+        "recentlyDeletedTitle": "Recently Deleted ({{count}} items)",
+        "recentlyDeletedHint": "Up to 7 recently deleted records are kept. Older ones are automatically removed.",
+        "recentlyDeletedEmpty": "No recently deleted records",
+        "backToList": "Back to list"
     },
     "sessionItem": {
         "recordPrefix": "Session",
@@ -26,14 +31,15 @@
         "openWindow": "Open this window",
         "deleteWindow": "Delete this window",
         "deleteTab": "Delete this tab",
-        "tabGroup": "Tab Group"
+        "tabGroup": "Tab Group",
+        "restoreRecord": "Restore"
     },
     "export": {
-        "button": "Export",
+        "button": "Export Backup",
         "title": "Export all records as JSON file"
     },
     "import": {
-        "button": "Import",
+        "button": "Import Backup",
         "title": "Import records from JSON file",
         "dialogTitle": "Choose Import Method",
         "dialogMessage": "File contains {{count}} records.\n\n• Merge: Keep existing records and add imported data\n• Replace: Clear all existing records and use imported data",

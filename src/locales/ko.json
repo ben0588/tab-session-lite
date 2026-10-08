@@ -11,7 +11,12 @@
         "title": "저장된 기록",
         "empty": "저장된 기록이 없습니다",
         "emptyHint": "위의 버튼을 클릭하여 현재 탭 저장",
-        "clearAll": "모두 지우기"
+        "clearAll": "모두 지우기",
+        "recentlyDeleted": "최근 삭제",
+        "recentlyDeletedTitle": "최근 삭제된 기록 ({{count}}개)",
+        "recentlyDeletedHint": "최근 삭제된 7개의 기록이 자동 보관됩니다. 초과 시 자동으로 덮어씁니다.",
+        "recentlyDeletedEmpty": "최근 삭제된 기록이 없습니다",
+        "backToList": "목록으로 돌아가기"
     },
     "sessionItem": {
         "recordPrefix": "기록",
@@ -26,7 +31,8 @@
         "openWindow": "이 창 열기",
         "deleteWindow": "이 창 삭제",
         "deleteTab": "이 탭 삭제",
-        "tabGroup": "탭 그룹"
+        "tabGroup": "탭 그룹",
+        "restoreRecord": "복원"
     },
     "export": {
         "button": "내보내기",

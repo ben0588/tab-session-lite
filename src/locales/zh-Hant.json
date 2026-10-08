@@ -11,7 +11,12 @@
         "title": "儲存紀錄",
         "empty": "尚無儲存的紀錄",
         "emptyHint": "點擊上方按鈕保存目前的分頁",
-        "clearAll": "清空全部"
+        "clearAll": "清空全部",
+        "recentlyDeleted": "最近刪除",
+        "recentlyDeletedTitle": "最近刪除紀錄（共 {{count}} 筆）",
+        "recentlyDeletedHint": "系統將自動保留最近 7 筆刪除紀錄，超過將自動覆蓋。",
+        "recentlyDeletedEmpty": "沒有最近刪除的紀錄",
+        "backToList": "返回清單"
     },
     "sessionItem": {
         "recordPrefix": "紀錄",
@@ -26,14 +31,15 @@
         "openWindow": "打開此視窗",
         "deleteWindow": "刪除此視窗",
         "deleteTab": "刪除此分頁",
-        "tabGroup": "分頁群組"
+        "tabGroup": "分頁群組",
+        "restoreRecord": "還原"
     },
     "export": {
-        "button": "匯出",
+        "button": "匯出備份",
         "title": "匯出所有紀錄為 JSON 檔案"
     },
     "import": {
-        "button": "匯入",
+        "button": "匯入備份",
         "title": "從 JSON 檔案匯入紀錄",
         "dialogTitle": "選擇匯入方式",
         "dialogMessage": "檔案包含 {{count}} 筆紀錄。\n\n• 合併：保留您現有的紀錄，並新增匯入的資料\n• 取代：清除所有現有紀錄，改用匯入的資料",

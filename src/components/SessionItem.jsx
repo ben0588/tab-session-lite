@@ -20,6 +20,8 @@ const GROUP_COLORS = {
  */
 export default function SessionItem({ 
   session, 
+  isDeleted = false,
+  onRestoreFromDeleted,
   onRestore, 
   onDelete, 
   onOpenTab, 
@@ -103,11 +105,12 @@ export default function SessionItem({
               <div 
                 className="text-sm font-medium text-gray-900 dark:text-ink truncate cursor-text hover:text-blue-600 dark:hover:text-white transition-colors"
                 onClick={(e) => {
+                  if (isDeleted) return;
                   e.stopPropagation();
                   setEditName(session.name || displayName);
                   setIsEditing(true);
                 }}
-                title={t('sessionItem.editNameHint')}
+                title={isDeleted ? undefined : t('sessionItem.editNameHint')}
               >
                 {displayName}
               </div>

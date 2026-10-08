@@ -25,6 +25,8 @@ import {
 function App() {
   const { t } = useTranslation();
   const [sessions, setSessions] = useState([]);
+  const [deletedSessions, setDeletedSessions] = useState([]);
+  const [showDeleted, setShowDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState(null);
@@ -77,9 +79,20 @@ function App() {
     }
   }, [t]);
 
+  // 載入最近刪除的 Sessions
+  const fetchDeletedSessions = useCallback(async () => {
+    try {
+      const data = await loadDeletedSessions();
+      setDeletedSessions(data);
+    } catch (_error) {
+      // 靜默失敗
+    }
+  }, []);
+
   useEffect(() => {
     fetchSessions();
-  }, [fetchSessions]);
+    fetchDeletedSessions();
+  }, [fetchSessions, fetchDeletedSessions]);
 
   // 顯示 Toast (語意分級時間：一般 1.8 秒，錯誤 3 秒；定時器防抖清理)
   const showToast = useCallback((message, type = 'success') => {
@@ -103,6 +116,7 @@ function App() {
       const newSession = await saveSession();
       if (newSession) {
         setSessions((prev) => [newSession, ...prev]);
+        setShowDeleted(false);
         showToast(t('toast.saved', { count: newSession.totalTabs }));
       } else {
         showToast(t('toast.noTabs'), 'info');
@@ -145,6 +159,7 @@ function App() {
         const success = await deleteSession(sessionId);
         if (success) {
           setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+          await fetchDeletedSessions();
           showToast(t('toast.deleted'));
         } else {
           showToast(t('toast.deleteFailed'), 'error');
@@ -163,10 +178,12 @@ function App() {
       isOpen: true,
       title: t('dialog.clearAllTitle'),
       message: t('dialog.clearAllMessage', { count: sessions.length }),
+      confirmText: t('dialog.moveToTrash'),
       onConfirm: async () => {
         const success = await clearAllSessions();
         if (success) {
           setSessions([]);
+          await fetchDeletedSessions();
           showToast(t('toast.clearedAll'));
         } else {
           showToast(t('toast.clearFailed'), 'error');
@@ -259,6 +276,7 @@ function App() {
           const success = await deleteSession(sessionId);
           if (success) {
             setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+            await fetchDeletedSessions();
             showToast(t('toast.recordDeleted'));
           } else {
             showToast(t('toast.deleteFailed'), 'error');
@@ -278,6 +296,18 @@ function App() {
       },
       onCancel: () => setConfirmDialog({ isOpen: false }),
     });
+  };
+
+  // 從最近刪除清單還原 Session
+  const handleRestoreFromDeleted = async (session) => {
+    const restored = await restoreFromDeletedSession(session.id);
+    if (restored) {
+      setDeletedSessions((prev) => prev.filter((s) => s.id !== session.id));
+      setSessions((prev) => [restored, ...prev]);
+      showToast(t('toast.restoredFromDeleted'));
+    } else {
+      showToast(t('toast.restoreFromDeletedFailed'), 'error');
+    }
   };
 
   // 匯出所有 Sessions 為 JSON
@@ -447,6 +477,9 @@ function App() {
         ) : (
           <SessionList
             sessions={sessions}
+            deletedSessions={deletedSessions}
+            showDeleted={showDeleted}
+            onToggleDeleted={() => setShowDeleted((v) => !v)}
             onRestore={handleRestore}
             onDelete={handleDelete}
             onOpenTab={handleOpenTab}
@@ -455,6 +488,7 @@ function App() {
             onClearAll={handleClearAll}
             onOverwrite={handleOverwrite}
             onDeleteWindow={handleDeleteWindow}
+            onRestoreFromDeleted={handleRestoreFromDeleted}
           />
         )}
       </main>
